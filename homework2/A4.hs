@@ -28,18 +28,29 @@ convertDoc ((Plaintext, stuff):xs) = makePlaintext stuff ++ convertDoc xs
 convertDoc ((Block, stuff):xs) = makeBlock stuff ++ convertDoc xs
 
 -- LEXICAL ANALYSIS --
-isTitle :: String -> (Keyword,String)
+{-
+isTitle :: String -> Maybe (Keyword,String)
 isTitle ('@':'t':'i':'t':'l':'e':xs) = (Title,xs)
 
-isSection :: String -> (Keyword,String)
+isSection :: String -> Maybe (Keyword,String)
 isSection ('@':'s':'e':'c':'t':'i':'o':'n':xs) = (Section,xs)
 
-isSubsection :: String -> (Keyword,String)
+isSubsection :: String -> Maybe (Keyword,String)
 isSubsection ('@':'s':'u':'b':'s':'e':'c':'t':'i':'o':'n':xs) = (Subsection,xs)
 
-isBlock :: String -> (Keyword,String)
+isBlock :: String -> Maybe (Keyword,String)
 isBlock ('@':'b':'l':'o':'c':'k':xs) = (Block,xs)
+-}
+
+getTag :: String -> (Keyword,String)
+getTag ('@':'t':'i':'t':'l':'e':xs) = (Title,xs)
+getTag ('@':'s':'e':'c':'t':'i':'o':'n':xs) = (Section,xs)
+getTag ('@':'s':'u':'b':'s':'e':'c':'t':'i':'o':'n':xs) = (Subsection,xs)
+getTag ('@':'b':'l':'o':'c':'k':xs) = (Block,xs)
+getTag s = (Plaintext,s)
+
 -------------------------
+
 
 
 
