@@ -42,6 +42,7 @@ getTag (x:xs) = "plaintext"
 
 removeTag :: String -> String 
 removeTag s | getTag s == "block" = tail (dropWhile (/= '}') s)
+			| getTag s == "plaintext" = tail (dropWhile (/= '@') s)
 			| otherwise = tail (dropWhile (/= ')') s)
 
 
