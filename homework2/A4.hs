@@ -22,7 +22,8 @@ makePlaintext :: String -> String
 makePlaintext s = s
 
 makeBlock :: String -> String
-makeBlock s = s
+makeBlock s = "<body>" ++ s ++ "</body>"
+
 -----------------------------
 -- Converts the tuple of keyword, content into a string.
 convertDoc :: [(String, String)] -> String
