@@ -29,12 +29,12 @@ convertDoc ((Block, stuff):xs) = makeBlock stuff ++ convertDoc xs
 
 -- LEXICAL ANALYSIS --
 
-getTag :: String -> (Keyword,String)
-getTag ('@':'t':'i':'t':'l':'e':xs) = (Title,xs)
-getTag ('@':'s':'e':'c':'t':'i':'o':'n':xs) = (Section,xs)
-getTag ('@':'s':'u':'b':'s':'e':'c':'t':'i':'o':'n':xs) = (Subsection,xs)
-getTag ('@':'b':'l':'o':'c':'k':xs) = (Block,xs)
-getTag (x:xs) = (Plaintext,[x])
+getTag :: String -> Keyword
+getTag ('@':'t':'i':'t':'l':'e':xs) = Title
+getTag ('@':'s':'e':'c':'t':'i':'o':'n':xs) = Section
+getTag ('@':'s':'u':'b':'s':'e':'c':'t':'i':'o':'n':xs) = Subsection
+getTag ('@':'b':'l':'o':'c':'k':xs) = Block
+getTag (x:xs) = Plaintext
 
 -------------------------
 
