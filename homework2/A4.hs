@@ -38,13 +38,11 @@ getTag (x:xs) = "plaintext"
 
 -------------------------
 
-getText :: String -> String
-getText x:xs | x == '@' = [' ']
-			 | otherwise = ([x] ++ getText xs)
-			 
+
+			
 extractArgs :: String -> String
 extractArgs s 
-	| getTag s == "plaintext" = 
+	| getTag s == "plaintext" = takeWhile (/= '@') s
 	| otherwise = splitOneOf "()" s !! 1
 
 
@@ -54,7 +52,7 @@ removeTag s | getTag s == "block" = tail (dropWhile (/= ')') s)
 			| otherwise = tail (dropWhile (/= ')') s)
 
 parse :: String -> [(String, String)]
-parse s | getTag == "title" = ("title",extractArgs s): (parse removeTag s)
+parse s | getTag s == "title" = ("title",extractArgs s): (parse (removeTag s))
 
 
 
