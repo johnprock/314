@@ -1,9 +1,14 @@
+-- Kalil Armstrong
+-- Patrick Rock
+-- CSCE 314 Assignment 4
+
 import System.Environment
 import Data.List
 import Data.List.Split
 
 
 -- CONVERTER FUNCTIONS --
+-- This will set items into the correct HTML format.
 makeTitle :: String -> String 
 makeTitle s = "<title>" ++ s ++ "</title>"
 
@@ -19,7 +24,7 @@ makePlaintext s = s
 makeBlock :: String -> String
 makeBlock s = s
 -----------------------------
-
+-- Converts the tuple of keyword, content into a string.
 convertDoc :: [(String, String)] -> String
 convertDoc [] = []
 convertDoc (("title", stuff):xs) = makeTitle stuff ++ convertDoc xs
@@ -29,7 +34,7 @@ convertDoc (("plaintext", stuff):xs) = makePlaintext stuff ++ convertDoc xs
 convertDoc (("block", stuff):xs) = makeBlock stuff ++ convertDoc xs
 
 -- LEXICAL ANALYSIS --
-
+-- Finds tags.
 getTag :: String -> String
 getTag ('@':'t':'i':'t':'l':'e':xs) = "title"
 getTag ('@':'s':'e':'c':'t':'i':'o':'n':xs) = "section"
@@ -38,13 +43,13 @@ getTag ('@':'b':'l':'o':'c':'k':xs) = "block"
 getTag s = "plaintext"
 
 -------------------------
-			
+-- Pulls the "content" out of the keyword.
 extractArgs :: String -> String
 extractArgs s 
 	| getTag s == "plaintext" = takeWhile (/= '@') s
 	| otherwise = splitOneOf "()" s !! 1
 
-
+-- Removes the keyword.
 removeTag :: String -> String 
 removeTag s 
 			| getTag s == "plaintext" = (dropWhile (/= '@') s)
@@ -60,7 +65,7 @@ parse s
 	| getTag s == "plaintext" = ("plaintext",extractArgs s): (parse (removeTag s))
 	| getTag s == "block" = ("block",extractArgs s): (parse (removeTag s))	
 
-
+-- Magic.
 generate :: String -> String
 generate s = convertDoc (parse s)
 
