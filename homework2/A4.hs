@@ -62,12 +62,6 @@ parse s
 generate :: String -> String
 generate s = convertDoc (parse s)
 
-
-isKeyWord :: String -> Bool
-isKeyWord s | head s ==  '@' = True
-			| otherwise = False
-			
-	
  
 main = do
 	[f,g] <- getArgs --code taken from haskell.org
