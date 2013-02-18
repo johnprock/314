@@ -34,7 +34,7 @@ getTag ('@':'t':'i':'t':'l':'e':xs) = "title"
 getTag ('@':'s':'e':'c':'t':'i':'o':'n':xs) = "section"
 getTag ('@':'s':'u':'b':'s':'e':'c':'t':'i':'o':'n':xs) = "subsection"
 getTag ('@':'b':'l':'o':'c':'k':xs) = "block"
-getTag (x:xs) = "plaintext"
+getTag s = "plaintext"
 
 -------------------------
 			
@@ -45,10 +45,11 @@ extractArgs s
 
 
 removeTag :: String -> String 
-removeTag s | getTag s == "block" = tail (dropWhile (/= ')') s)
-			| getTag s == "plaintext" = tail (dropWhile (/= '@') s)
+removeTag s 
+			| getTag s == "plaintext" = (dropWhile (/= '@') s)
 			| otherwise = tail (dropWhile (/= ')') s)
 
+			
 parse :: String -> [(String, String)]
 parse s 
 	| getTag s == "title" = ("title",extractArgs s): (parse (removeTag s))
@@ -60,7 +61,6 @@ parse s
 
 generate :: String -> String
 generate s = convertDoc (parse s)
-
 
 
 isKeyWord :: String -> Bool
