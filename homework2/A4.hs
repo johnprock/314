@@ -3,11 +3,8 @@ import Data.List
 
 
 isKeyWord :: String -> Bool
-isKeyWord s | s == "@title"      = True
-			| s == "@section"    = True
-			| s == "@subsection" = True
-			| s == "@block"      = True
-			| otherwise          = False
+isKeyWord s | head s ==  '@' = True
+			| otherwise = False
 			
  
 main = do
@@ -15,4 +12,4 @@ main = do
 	s     <- readFile f
 	writeFile g s
 	
-	
+	--test
