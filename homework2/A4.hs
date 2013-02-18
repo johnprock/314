@@ -38,6 +38,11 @@ getTag (x:xs) = Plaintext
 
 -------------------------
 
+removeTag :: String -> String 
+removeTag s | getTag s == Block = drop ((elemIndex '}' s) + 1) s
+			| otherwise = drop ((elemIndex ')' s) + 1) s
+
+
 
 
 
