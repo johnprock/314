@@ -1,10 +1,13 @@
 import System.Environment
 import Data.List
 
+data KeyWords = Title | Section | Subsection | Block | Plaintext
+
 
 isKeyWord :: String -> Bool
 isKeyWord s | head s ==  '@' = True
 			| otherwise = False
+			
 			
  
 main = do
