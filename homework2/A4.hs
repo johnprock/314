@@ -21,6 +21,7 @@ makeBlock s = s
 -----------------------------
 
 convertDoc :: [(String, String)] -> String
+convertDoc [] = []
 convertDoc (("title", stuff):xs) = makeTitle stuff ++ convertDoc xs
 convertDoc (("section", stuff):xs) = makeSection stuff ++ convertDoc xs
 convertDoc (("subsection", stuff):xs) = makeSubsection stuff ++ convertDoc xs
@@ -52,6 +53,7 @@ removeTag s
 			
 parse :: String -> [(String, String)]
 parse s 
+	| s == [] = []
 	| getTag s == "title" = ("title",extractArgs s): (parse (removeTag s))
 	| getTag s == "section" = ("section",extractArgs s): (parse (removeTag s))
 	| getTag s == "subsection" = ("subsection",extractArgs s): (parse (removeTag s))
