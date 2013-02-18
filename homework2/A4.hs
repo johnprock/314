@@ -1,7 +1,6 @@
 import System.Environment
 import Data.List
 
-data Keyword = Title | Section | Subsection | Plaintext | Block
 
 -- CONVERTER FUNCTIONS --
 makeTitle :: String -> String 
@@ -20,27 +19,30 @@ makeBlock :: String -> String
 makeBlock s = s
 -----------------------------
 
-convertDoc :: [(Keyword, String)] -> String
-convertDoc ((Title, stuff):xs) = makeTitle stuff ++ convertDoc xs
-convertDoc ((Section, stuff):xs) = makeSection stuff ++ convertDoc xs
-convertDoc ((Subsection, stuff):xs) = makeSubsection stuff ++ convertDoc xs
-convertDoc ((Plaintext, stuff):xs) = makePlaintext stuff ++ convertDoc xs
-convertDoc ((Block, stuff):xs) = makeBlock stuff ++ convertDoc xs
+convertDoc :: [(String, String)] -> String
+convertDoc (("title", stuff):xs) = makeTitle stuff ++ convertDoc xs
+convertDoc (("section", stuff):xs) = makeSection stuff ++ convertDoc xs
+convertDoc (("subsection", stuff):xs) = makeSubsection stuff ++ convertDoc xs
+convertDoc (("plaintext", stuff):xs) = makePlaintext stuff ++ convertDoc xs
+convertDoc (("block", stuff):xs) = makeBlock stuff ++ convertDoc xs
 
 -- LEXICAL ANALYSIS --
 
-getTag :: String -> Keyword
-getTag ('@':'t':'i':'t':'l':'e':xs) = Title
-getTag ('@':'s':'e':'c':'t':'i':'o':'n':xs) = Section
-getTag ('@':'s':'u':'b':'s':'e':'c':'t':'i':'o':'n':xs) = Subsection
-getTag ('@':'b':'l':'o':'c':'k':xs) = Block
-getTag (x:xs) = Plaintext
+getTag :: String -> String
+getTag ('@':'t':'i':'t':'l':'e':xs) = "title"
+getTag ('@':'s':'e':'c':'t':'i':'o':'n':xs) = "section"
+getTag ('@':'s':'u':'b':'s':'e':'c':'t':'i':'o':'n':xs) = "subsection"
+getTag ('@':'b':'l':'o':'c':'k':xs) = "block"
+getTag (x:xs) = "plaintext"
 
 -------------------------
 
+	
+
+
 removeTag :: String -> String 
-removeTag s | getTag s == Block = drop ((elemIndex '}' s) + 1) s
-			| otherwise = drop ((elemIndex ')' s) + 1) s
+removeTag s | getTag s == "block" = tail (dropWhile (/= '}') s)
+			| otherwise = tail (dropWhile (/= ')') s)
 
 
 
