@@ -37,8 +37,6 @@ getTag ('@':'b':'l':'o':'c':'k':xs) = "block"
 getTag (x:xs) = "plaintext"
 
 -------------------------
-
-
 			
 extractArgs :: String -> String
 extractArgs s 
@@ -52,7 +50,12 @@ removeTag s | getTag s == "block" = tail (dropWhile (/= ')') s)
 			| otherwise = tail (dropWhile (/= ')') s)
 
 parse :: String -> [(String, String)]
-parse s | getTag s == "title" = ("title",extractArgs s): (parse (removeTag s))
+parse s 
+	| getTag s == "title" = ("title",extractArgs s): (parse (removeTag s))
+	| getTag s == "section" = ("section",extractArgs s): (parse (removeTag s))
+	| getTag s == "subsection" = ("subsection",extractArgs s): (parse (removeTag s))
+	| getTag s == "plaintext" = ("plaintext",extractArgs s): (parse (removeTag s))
+	| getTag s == "block" = ("block",extractArgs s): (parse (removeTag s))	
 
 
 
