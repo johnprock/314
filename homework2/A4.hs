@@ -1,6 +1,7 @@
 import System.Environment
 import Data.List
 
+data Keyword = Title | Section | Subsection | Plaintext | Block
 
 -- CONVERTER FUNCTIONS --
 makeTitle :: String -> String 
@@ -19,14 +20,15 @@ makeBlock :: String -> String
 makeBlock s = s
 -----------------------------
 
+convertDoc :: [(Keyword, String)] -> String
+convertDoc ((Title, stuff):xs) = makeTitle stuff ++ convertDoc xs
+convertDoc ((Section, stuff):xs) = makeSection stuff ++ convertDoc xs
+convertDoc ((Subsection, stuff):xs) = makeSubsection stuff ++ convertDoc xs
+convertDoc ((Plaintext, stuff):xs) = makePlaintext stuff ++ convertDoc xs
+convertDoc ((Block, stuff):xs) = makeBlock stuff ++ convertDoc xs
 
-convertDoc :: [(String, String)] -> String
-convertDoc (("title", stuff):xs) = makeTitle stuff ++ convertDoc xs
-convertDoc (("section", stuff):xs) = makeSection stuff ++ convertDoc xs
-convertDoc (("subsection", stuff):xs) = makeSubsection stuff ++ convertDoc xs
-convertDoc (("plaintext", stuff):xs) = makePlaintext stuff ++ convertDoc xs
-convertDoc (("block", stuff):xs) = makeBlock stuff ++ convertDoc xs
-
+findTitles :: String -> [(String,String)]
+findTitles ('@':'t':'i':'t':'l':'e':xs) = [("title","t")]
 
 
 isKeyWord :: String -> Bool
