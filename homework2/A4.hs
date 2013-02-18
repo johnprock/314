@@ -24,7 +24,7 @@ convertDoc :: [(String, String)] -> String
 convertDoc (("title", stuff):xs) = makeTitle stuff ++ convertDoc xs
 convertDoc (("section", stuff):xs) = makeSection stuff ++ convertDoc xs
 convertDoc (("subsection", stuff):xs) = makeSubsection stuff ++ convertDoc xs
-convertDoc (("plaintext", stuff):xs) = makePlainText stuff ++ convertDoc xs
+convertDoc (("plaintext", stuff):xs) = makePlaintext stuff ++ convertDoc xs
 convertDoc (("block", stuff):xs) = makeBlock stuff ++ convertDoc xs
 
 
