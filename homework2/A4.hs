@@ -1,8 +1,6 @@
 import System.Environment
 import Data.List
 
-data KeyWords = Title | Section | Subsection | Block | Plaintext
-
 
 -- CONVERTER FUNCTIONS --
 makeTitle :: String -> String 
@@ -21,13 +19,13 @@ makeBlock :: String -> String
 makeBlock s = s
 -----------------------------
 
-convertDoc :: [(Keywords, String)] -> String
-converDoc x:xs 
-	| fst x == Title      = makeTitle (snd x)      : (convertDoc xs)
-	| fst x == Section    = makeSection (snd x)    : (convertDoc xs)
-	| fst x == Subsection = makeSubsection (snd x) : (convertDoc xs)
-	| fst x == Block      = makeBlock (snd x)      : (convertDoc xs)
-	| fst x == Plaintext  = makePlaintext(snd x)   : (convertDoc xs)
+
+convertDoc :: [(String, String)] -> String
+convertDoc (("title", stuff):xs) = makeTitle stuff ++ convertDoc xs
+convertDoc (("section", stuff):xs) = makeSection stuff ++ convertDoc xs
+convertDoc (("subsection", stuff):xs) = makeSubsection stuff ++ convertDoc xs
+convertDoc (("plaintext", stuff):xs) = makePlainText stuff ++ convertDoc xs
+convertDoc (("block", stuff):xs) = makeBlock stuff ++ convertDoc xs
 
 
 
@@ -35,11 +33,10 @@ isKeyWord :: String -> Bool
 isKeyWord s | head s ==  '@' = True
 			| otherwise = False
 			
-			
+	
  
 main = do
 	[f,g] <- getArgs --code taken from haskell.org
 	s     <- readFile f
 	writeFile g s
 	
-	--test
