@@ -58,7 +58,8 @@ parse s
 	| getTag s == "block" = ("block",extractArgs s): (parse (removeTag s))	
 
 
-
+generate :: String -> String
+generate s = convertDoc (parse s)
 
 
 
@@ -71,5 +72,5 @@ isKeyWord s | head s ==  '@' = True
 main = do
 	[f,g] <- getArgs --code taken from haskell.org
 	s     <- readFile f
-	writeFile g s
+	writeFile g (generate s)
 	
