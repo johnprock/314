@@ -27,8 +27,22 @@ convertDoc ((Subsection, stuff):xs) = makeSubsection stuff ++ convertDoc xs
 convertDoc ((Plaintext, stuff):xs) = makePlaintext stuff ++ convertDoc xs
 convertDoc ((Block, stuff):xs) = makeBlock stuff ++ convertDoc xs
 
-findTitles :: String -> [(String,String)]
-findTitles ('@':'t':'i':'t':'l':'e':xs) = [("title","t")]
+-- LEXICAL ANALYSIS --
+isTitle :: String -> [(Keyword,String)]
+isTitle ('@':'t':'i':'t':'l':'e':xs) = [(Title,"t")]
+
+isSection :: String -> [(Keyword,String)]
+isSection ('@':'s':'e':'c':'t':'i':'o':'n':xs) = [(Section,"t")]
+
+isSubsection :: String -> [(Keyword,String)]
+isSubsection ('@':'s':'u':'b':'s':'e':'c':'t':'i':'o':'n':xs) = [(Subsection,"t")]
+
+isBlock :: String -> [(Keyword,String)]
+isBlock ('@':'b':'l':'o':'c':'k':xs) = [(Block,"t")]
+-------------------------
+
+
+
 
 
 isKeyWord :: String -> Bool
