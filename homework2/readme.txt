@@ -1,1 +1,1 @@
-HTML scriptong language
+HTML scripting language
