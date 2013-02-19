@@ -2,6 +2,8 @@
 -- Patrick Rock
 -- CSCE 314 Assignment 4
 
+-- Note: At present, block uses parantheses instead of braces. Without doing a parity check, it's ambiguous as to how to handle braces inside of a code snippet.
+
 import System.Environment
 import Data.List
 import Data.List.Split
