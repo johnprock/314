@@ -7,33 +7,29 @@ import Data.List
 import Data.List.Split
 
 
+-- Template generator
+-- Take the output, and then cons it with the stuff I want at the beginning!
+makeTemplate :: String -> String
+makeTemplate s = "<style>" ++ "h1" ++ "\n" ++ "{" ++ "\n" ++ "text-align:mid;" ++ "\n" ++ "color:blue;" ++ "\n" ++ "font-size:24pt;" ++ "\n" ++ "}" ++ "\n" ++"h3" ++ "\n" ++ "{" ++ "\n" ++ "color:red;" ++ "\n" ++ "text-align:left;" ++ "\n" ++ "font-size:18pt;" ++ "\n" ++ "}" ++ "\n" ++ "</style>" ++ generate s
+
 -- CONVERTER FUNCTIONS --
 -- This will set items into the correct HTML format.
 makeTitle :: String -> String 
 makeTitle s = "<title>" ++ s ++ "</title>"
 
 makeSection :: String -> String
-makeSection s = "<section>" ++ s ++ "</section>"
+makeSection s = "<h1>" ++ s ++ "</h1>"
 
 makeSubsection :: String -> String
-makeSubsection s = "<section>" ++ s ++ "</section>"
+makeSubsection s = "<h3>" ++ s ++ "</h3>"
 
 makePlaintext :: String -> String
-makePlaintext s = s
+makePlaintext s = "<p>" ++ s ++ "</p>"
 
 makeBlock :: String -> String
 makeBlock s = "<body>" ++ s ++ "</body>"
 
 -----------------------------
--- Converts the tuple of keyword, content into a string.
-convertDoc :: [(String, String)] -> String
-convertDoc [] = []
-convertDoc (("title", stuff):xs) = makeTitle stuff ++ convertDoc xs
-convertDoc (("section", stuff):xs) = makeSection stuff ++ convertDoc xs
-convertDoc (("subsection", stuff):xs) = makeSubsection stuff ++ convertDoc xs
-convertDoc (("plaintext", stuff):xs) = makePlaintext stuff ++ convertDoc xs
-convertDoc (("block", stuff):xs) = makeBlock stuff ++ convertDoc xs
-
 -- LEXICAL ANALYSIS --
 -- Finds tags.
 getTag :: String -> String
@@ -66,6 +62,15 @@ parse s
 	| getTag s == "plaintext" = ("plaintext",extractArgs s): (parse (removeTag s))
 	| getTag s == "block" = ("block",extractArgs s): (parse (removeTag s))	
 
+-- Converts the tuple of keyword, content into a string.
+convertDoc :: [(String, String)] -> String
+convertDoc [] = []
+convertDoc (("title", content):xs) = makeTitle content ++ convertDoc xs
+convertDoc (("section", content):xs) = makeSection content ++ convertDoc xs
+convertDoc (("subsection", content):xs) = makeSubsection content ++ convertDoc xs
+convertDoc (("plaintext", content):xs) = makePlaintext content ++ convertDoc xs
+convertDoc (("block", content):xs) = makeBlock content ++ convertDoc xs
+
 -- Magic.
 generate :: String -> String
 generate s = convertDoc (parse s)
@@ -74,5 +79,5 @@ generate s = convertDoc (parse s)
 main = do
 	[f,g] <- getArgs --code taken from haskell.org
 	s     <- readFile f
-	writeFile g (generate s)
+	writeFile g (makeTemplate s)
 	
