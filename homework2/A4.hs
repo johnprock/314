@@ -12,7 +12,7 @@ import Data.List.Split
 -- Template generator
 -- Take the output, and then cons it with the stuff I want at the beginning!
 makeTemplate :: String -> String
-makeTemplate s = "<style>" ++ "body" ++ "\n" ++ "{" ++ "background-color:#000000;" ++ "\n" ++ "text-align:center;" ++ "\n" ++ "height:100%;" ++ "\n" ++ "margin:auto;" ++ "\n" ++ "width: 960px;" ++ "\n" ++ "color: FFFFFF;" ++ "\n" ++ "text-align:center;" ++ "\n" ++ "}" ++ "\n" ++ "h1" ++ "\n" ++ "{" ++ "\n" ++ "text-align:mid;" ++ "\n" ++ "\n" ++ "background-color:C0C0C0;" ++ "\n" ++ "color:3333FF;" ++ "\n" ++ "font-size:24pt;" ++ "\n" ++ "}" ++ "\n" ++"h3" ++ "\n" ++ "{" ++ "\n" ++ "background-color:#C0C0C0;" ++ "\n" ++ "color:3333FF;" ++ "\n" ++ "text-align:mid;" ++ "\n" ++ "font-size:18pt;" ++ "\n" ++ "}" ++ "\n" ++ "</style>" ++ generate s
+makeTemplate s = "<head>" ++ "\n" ++ "<style>" ++ "body" ++ "\n" ++ "{" ++ "background-color:#000000;" ++ "\n" ++ "text-align:center;" ++ "\n" ++ "height:100%;" ++ "\n" ++ "margin:auto;" ++ "\n" ++ "width: 960px;" ++ "\n" ++ "color: FFFFFF;" ++ "\n" ++ "text-align:center;" ++ "\n" ++ "}" ++ "\n" ++ "h1" ++ "\n" ++ "{" ++ "\n" ++ "text-align:mid;" ++ "\n" ++ "\n" ++ "background-color:C0C0C0;" ++ "\n" ++ "color:3333FF;" ++ "\n" ++ "font-size:24pt;" ++ "\n" ++ "}" ++ "\n" ++"h3" ++ "\n" ++ "{" ++ "\n" ++ "background-color:#C0C0C0;" ++ "\n" ++ "color:3333FF;" ++ "\n" ++ "text-align:mid;" ++ "\n" ++ "font-size:18pt;" ++ "\n" ++ "}" ++ "\n" ++ "</style>" ++ "\n" ++ "</head>" ++ generate s
 
 -- CONVERTER FUNCTIONS --
 -- This will set items into the correct HTML format.
