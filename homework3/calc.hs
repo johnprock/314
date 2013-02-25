@@ -9,6 +9,7 @@ data Token = Number Float --used to build a token stream
            | Variable String
            | Open
            | Close
+           | Period
            | Var
            | Def
            deriving (Show)
@@ -26,6 +27,7 @@ nextToken (a:ds) --these patterns match simple tokens
     | a == '/' = [(Div, ds)]
     | a == '(' = [(Open, ds)]
     | a == ')' = [(Close, ds)]
+    | a == '.' = [(Period, ds)]
     | a == ' ' = nextToken (ds) --ignore whitespace
 nextToken (a:b:c:ds)
     | isVar = [(Var, ds)]
