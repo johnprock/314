@@ -1,21 +1,10 @@
 import System.Environment
 
-newtype Parser a = Parser (String -> [(a,String)])
+type Parser a = String -> [(a,String)]
 
-parse :: Parser a -> String -> [(a,String)]
-parse (Parser p) inp = p inp
+data Grammar = Operator | Digit             
 
-instance Monad Parser where
-   return v = Parser (\inp -> [(v,inp)])
-   p >>= f =  Parser (\inp -> case parse p inp of
-                         []        -> []
-                         [(v,out)] -> parse (f v) out)
-
-data Grammar = Operator | Digit 
-
-                   
-
---copy input to output
+--move input to output
 echo :: IO ()
 echo = do
        line <- getLine
