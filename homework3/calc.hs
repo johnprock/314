@@ -11,6 +11,7 @@ data Token = Number Float --used to build a token stream
            | Close
            | Var
            | Def
+           deriving (Show)
 
 
 isAlphanum :: Char -> Bool
@@ -18,14 +19,15 @@ isAlphanum a = isAlpha a || isDigit a
 
 nextToken :: String -> [(Token, String)] --consumes one token
 nextToken [] = []
-nextToken (a:b:c:ds) --these patterns match simple tokens
-    | a == '+' = [(Plus, b:c:ds)]
-    | a == '-' = [(Minus, b:c:ds)]
-    | a == '*' = [(Mult, b:c:ds)]
-    | a == '/' = [(Div, b:c:ds)]
-    | a == '(' = [(Open, b:c:ds)]
-    | a == ')' = [(Close, b:c:ds)]
-    | a == ' ' = nextToken (b:c:ds) --ignore whitespace
+nextToken (a:ds) --these patterns match simple tokens
+    | a == '+' = [(Plus, ds)]
+    | a == '-' = [(Minus, ds)]
+    | a == '*' = [(Mult, ds)]
+    | a == '/' = [(Div, ds)]
+    | a == '(' = [(Open, ds)]
+    | a == ')' = [(Close, ds)]
+    | a == ' ' = nextToken (ds) --ignore whitespace
+nextToken (a:b:c:ds)
     | isVar = [(Var, ds)]
     | isDef = [(Def, ds)]
     where
