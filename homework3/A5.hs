@@ -2,7 +2,10 @@ import System.Environment
 
 type Parser a = String -> [(a,String)]
 
-data Grammar = Operator | Digit             
+data Grammar = Operator | Digit   
+
+digit :: Parser Digit
+          
 
 --move input to output
 echo :: IO ()
