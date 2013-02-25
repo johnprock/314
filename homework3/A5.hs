@@ -102,13 +102,13 @@ floatMagic2 a b c
 
 exponentToFloat :: [Token] -> [Token]
 exponentToFloat (a:b:c:d:es)
-	| ( floatMagic a b c d) = exponentToFloat( ("Float", (snd a) ++ (snd b) ++ (snd c) ++ (snd d) ) : es ) 
+	| ( floatMagic a b c d) = exponentToFloat( ("Float", (snd a) ++ (snd b) ++ (snd c) ++ (snd d) ) : es )
 exponentToFloat (a:b:c:ds)
     |( floatMagic2 a b c ) = exponentToFloat( ("Float", (snd a) ++ (snd b) ++ (snd c)) : ds ) 
 exponentToFloat (a:b:cs)
 	| ( (fst a == "Digit") && (fst b == "Exponent") ) = exponentToFloat(("Float", (snd a) ++ (snd b) ) : cs )
 exponentToFloat (a:bs)
-	| (fst a == "Digit") = ("Float", (snd a)) : bs 
+	| (fst a == "Digit") = exponentToFloat(("Float", (snd a)) : bs )
 	| otherwise = a : (exponentToFloat (bs))
 exponentToFloat a = a
 
@@ -135,6 +135,19 @@ tokenMagic a = exponentToFloat $ decimalToExponent $ digitToDecimal $ tokenize a
 
 ---------------EVALUATOR---------------------
 
+add :: Token -> Token -> Token --adds
+add a c = ("Float", show((read(snd a)::Float) + (read(snd c)::Float)))   
+
+sub :: Token -> Token -> Token -- subtracts
+sub a c = ("Float", show((read(snd a)::Float) - (read(snd c)::Float)))   
+
+mult :: Token -> Token -> Token -- multiplies
+mult a c = ("Float", show((read(snd a)::Float) * (read(snd c)::Float)))   
+
+division :: Token -> Token -> Token -- divides (kind of)
+division a c = ("Float", show((read(snd a)::Float) / (read(snd c)::Float)))   
+
+
 
 -------------------ABSTRACT SYNTAX TREE------------------------------
 
@@ -145,9 +158,9 @@ tokenToDigit :: Token -> Int
 tokenToDigit a
 	| (fst a == "Digit") = digitToInt(head(snd a)) :: Int 
 
-add :: [Token] -> Maybe Int
-add [a] = Just (tokenToDigit a)
-add [a,b] = Nothing
+--add :: [Token] -> Maybe Int
+--add [a] = Just (tokenToDigit a)
+--add [a,b] = Nothing
 --add [a,b,c] 
 
 --   | (fst a == "Digit" && snd b == '+' && fst c == "Digit") = ((read (fst a) :: Int) + (read (fst c) :: Int))
