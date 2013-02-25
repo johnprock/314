@@ -3,7 +3,7 @@ import Data.Char
 
 type Parser a = String -> [(a,String)]
 
-data Grammar = Operator | Digit | Letter | Whitespace | Error
+--data Grammar = Operator | Digit | Letter | Whitespace | Error
 
 isOperator :: Char -> Bool
 isOperator x 
@@ -13,15 +13,13 @@ isOperator x
     | x == '/' = True
     | otherwise = False
 
-getToken :: String -> (Grammar,Char)
+getToken :: String -> (String,Char)
 getToken (x:xs) 
-    | isDigit x = (Digit,x)
-    | x == ' ' = (Whitespace,x)
-    | isOperator x = (Operator,x)
-    | isLetter x = (Letter,x)
+    | isDigit x = ("Digit",x)
+    | x == ' ' = ("Whitespace",x)
+    | isOperator x = ("Operator",x)
+    | isLetter x = ("Letter",x)
   
-    
-
 --move input to output
 echo :: IO ()
 echo = do
