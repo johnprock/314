@@ -133,6 +133,10 @@ tokenMagic :: String -> [Token]
 tokenMagic a = exponentToFloat $ decimalToExponent $ digitToDecimal $ tokenize a
 ---------------------------------------------------------------------
 
+----------------PARSER------------------
+-- tsToPrimary :: [Token] -> [Token]
+-- tsToPrimary a:b:c:ds
+
 ---------------EVALUATOR---------------------
 
 add :: Token -> Token -> Token --adds
