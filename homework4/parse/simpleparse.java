@@ -6,14 +6,14 @@ class simpleparse {
   public static void main(String[] args) {
 
     String inp = args[0]; // get sting to parse
-   // Parser p = new Parser(inp);
+    Parser p = new Parser(inp);
 
-    //System.out.println( p.parseExpr() );
+    System.out.println( p.parseExpr() );
   
   }
 }
 
-/*
+
 class Parser {
   
   // private data members
@@ -26,51 +26,61 @@ class Parser {
   
   // parses the token stream and returns the expression value
   public String parseExpr() {
+    String expr;
+    double result;
 
-    Token t0 = ts.getToken();
-
-    if(t0.type == "number") {
-      return parseTerm();
+    if(ts.peek(0).type == "number") {  // Term
+      if(ts.peek(1).value != "+" && ts.peek(1).value != "-") {
+        return parseTerm();
+      }
     }
 
-    String expr = parseExpr();
-   
-      Token t1 = ts.getToken();
-      double val = Double.parseDouble(t0.value);
-      
-      if(t1.value == "empty") {
-        return val;
-      }
-      if(t1.value == "+") {
-        return val + parseExpr();
-      }
-      if(t1.value == "-") {
-        return val - parseExpr();
-      }
-    
+    expr = parseExpr();
+
+    if(ts.peek(0).value == "+") {  // Expression + Term
+      ts.get();
+      result = Double.parseDouble(expr) + Double.parseDouble(parseTerm());
+      return String.valueOf(result);
+    }
+    if(ts.peek(0).value == "-") {  // Expression - Term
+      ts.get();
+      result = Double.parseDouble(expr) - Double.parseDouble(parseTerm());
+      return String.valueOf(result);
+    }
     return "error";
   }
       
   private String parseTerm() {
+    String term;
+    double result;
 
-    Token t0 = ts.getToken();
-    if(t0.type == "number") {
-      Token t1 = ts.getToken();
-      double val = Double.parseDouble(t0.value);
+    if(ts.peek(0).type == "number") {  // Primary
+      return parsePrimary();
+    }
 
-      if(t1.value == "empty") {
-        return val;
-      }
-      if(t1.value == "*") {
-        return val * parseTerm();
-      }
-      if(t1.value == "/") {
-        return val / parseTerm();
-      }
+    term = parseTerm();
+
+    if(ts.peek(0).value == "*") {  // Term * Primary
+      ts.get();
+      result = Double.parseDouble(term) * Double.parseDouble(parsePrimary());
+      return String.valueOf(result);
+    }
+    if(ts.peek(0).value == "/") {  // Term / Primary
+      ts.get();
+      result = Double.parseDouble(term) / Double.parseDouble(parsePrimary());
+      return String.valueOf(result);
     }
     return "error";
   }
-}*/
+
+
+  private String parsePrimary() {
+    if(ts.peek(0).type == "number")  {
+      return ts.get().value;
+    }
+    return "error";
+  }
+}
 
 class TokenStream {
 
@@ -99,8 +109,8 @@ class TokenStream {
     return tokens.get(temp);
   }
 
-  public Token peek() {
-    return tokens.get(pos);
+  public Token peek(int i) {
+    return tokens.get(pos+i);
   }
 
 
