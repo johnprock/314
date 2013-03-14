@@ -176,7 +176,8 @@ private class Parser {
     }
 
     System.out.println("Primary parse error");
-    return "error";
+    System.exit(1);
+    return "";
   }
 
   private String parseFunction() {
@@ -215,9 +216,10 @@ private class Parser {
     if(peek == "tanh") {
       return String.valueOf(Math.tanh(result));
     }
+    System.out.println("Function parse error");
+    System.exit(1);
+    return "";
 
-
-    return "error";    
   }
 }
 
@@ -311,7 +313,8 @@ private class TokenStream {
     }
    
     System.out.println("Tokenization error");
-    return new Token("error", "");
+    System.exit(1);
+    return new Token("","");
   }
   
   private Token getFunc(String f) {
