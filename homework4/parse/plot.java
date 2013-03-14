@@ -1,6 +1,7 @@
 import java.util.*;
 import java.lang.Error;
 import java.lang.Object;
+import java.lang.Math;
 
 class Plot {
 
@@ -138,16 +139,50 @@ private class Parser {
 
     String peek1 = ts.peek(0).type;
     String peek2 = ts.peek(2).type;
-    if(peek1 == "number" && peek2 == "operator") {
+
+    if(peek1 == "number" && peek2 == "operator") { // exponentiation
+      double base = Double.parseDouble(ts.get().value);
+      ts.get();
+      double exp  = Double.parseDouble(ts.get().value);
+      result = Math.pow(base, exp);
+      return String.valueOf(result);
+    }
+    if(peek1 == "number") { // literal
       return ts.get().value;
     }
-    if(peek2 == "paren") {
+    if(peek2 == "paren") { // parenthetical expression
       ts.get();
       String e = parseExpr();
       ts.get();
       return e;
     }
+    if(peek1 == "function") { // function call
+      return parseFunction();
+    }
+
     return "error";
+  }
+
+  private String parseFunction() {
+    double result;
+
+    String peek = ts.peek(0).value;
+    ts.get();
+    result = Double.parseDouble(parseExpr());
+    if(peek == "sin") {
+      return String.valueOf(Math.sin(result));
+    }
+    if(peek == "cos") {
+      return String.valueOf(Math.cos(result));
+    }
+    if(peek == "tan") {
+      return String.valueOf(Math.tan(result));
+    }
+    if(peek == "log") {
+      return String.valueOf(Math.log(result));
+    }
+
+    return "error";    
   }
 }
 
@@ -227,16 +262,9 @@ private class TokenStream {
     return new Token("error", "");
   }
   
-  private Token getFunc(String type) {
-    int start;
-    int end;
-    String args;
-
-    start = raw.indexOf('(');
-    end   = raw.indexOf(')');
-    args  = raw.substring(start+1,end);
-
-    return new Token(args,type);
+  private Token getFunc(String f) {
+    raw = raw.substring(f.length());
+    return new Token(f,"function");
   }
 
   // a number consists of a series of digits 
