@@ -5,20 +5,39 @@ import java.lang.Object;
 class Plot {
 
   // private data members
-  Evaluator eval;
+  String inp;
   String xrng;
   String yrng;
   String trng;
 
 
   // constructor
-  Plot(String inp, String x, String y, String t) {
-    eval = new Evaluator(inp);
+  Plot(String i, String x, String y, String t) {
+    // these hold the command line arguments for processing
+    // by our objects
+    inp  = i;
     xrng = x;
     yrng = y;
     trng = t;
   }
 
+private class Grapher { // Kalil's Class!
+
+  // private data members
+  private Evaluator eval;
+  // the evaluator will let you get the value
+  // of the input function at any value of t
+  // by calling the public methods evalxAt()
+  // and evalyAt
+
+  // constructor
+  public Grapher() {
+    eval = new Evaluator(inp);
+  }
+
+  // methods that plots stuff here
+
+}
 
 private class Evaluator {
 
@@ -34,12 +53,12 @@ private class Evaluator {
     parseRaw();
   }
 
-  public double evalxAt(double t) {
+  public double evalxAt(double t) { // returns the x value at t
     Parser p = new Parser(bindVar(x,t));
     return Double.parseDouble(p.parseExpr());
   }
 
-  public double evalyAt(double t) {
+  public double evalyAt(double t) { // returns the y value at t
     Parser p = new Parser(bindVar(y,t));
     return Double.parseDouble(p.parseExpr());
   }
