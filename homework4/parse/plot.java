@@ -148,6 +148,13 @@ private class Parser {
     String peek1 = ts.peek(0).type;
     String peek2 = ts.peek(1).value;
 
+   if(ts.peek(0).value.equals("-")) { // negative number
+     ts.get(); // clear -
+     result = Double.parseDouble(parseExpr());
+     result = (-1)*result;
+     return String.valueOf(result);
+   }
+
    if(peek1 == "number" && peek2 == "^") { // exponentiation
       double base = Double.parseDouble(ts.get().value);
       ts.get();
@@ -193,6 +200,22 @@ private class Parser {
     if(peek == "log") {
       return String.valueOf(Math.log(result));
     }
+    if(peek == "abs") {
+      return String.valueOf(Math.abs(result));
+    }
+    if(peek == "exp") {
+      return String.valueOf(Math.exp(result));
+    }
+    if(peek == "sinh") {
+      return String.valueOf(Math.sinh(result));
+    }
+    if(peek == "cosh") {
+      return String.valueOf(Math.cosh(result));
+    }
+    if(peek == "tanh") {
+      return String.valueOf(Math.tanh(result));
+    }
+
 
     return "error";    
   }
@@ -262,6 +285,15 @@ private class TokenStream {
     if(raw.substring(0,3).equals("sin")) {
       return getFunc("sin");
     }
+    if(raw.substring(0,4).equals("cosh")) {
+      return getFunc("cosh");
+    }
+    if(raw.substring(0,4).equals("sinh")) {
+      return getFunc("sinh");
+    }
+    if(raw.substring(0,4).equals("tanh")) {
+      return getFunc("tanh");
+    }
     if(raw.substring(0,3).equals("cos")) {
       return getFunc("cos");
     }
@@ -271,6 +303,13 @@ private class TokenStream {
     if(raw.substring(0,3).equals("log")) {
       return getFunc("log");
     }
+    if(raw.substring(0,3).equals("abs")) {
+      return getFunc("abs");
+    }
+    if(raw.substring(0,3).equals("exp")) {
+      return getFunc("exp");
+    }
+   
     System.out.println("Tokenization error");
     return new Token("error", "");
   }
