@@ -2,23 +2,25 @@ import java.util.*;
 import java.lang.Error;
 import java.lang.Object;
 
-class simpleparse {
-  public static void main(String[] args) {
+class Plot {
 
-    String inp = args[0]; // get sting to parse
-    String xRange     = args[1];
-    String yRange     = args[2];
-    String tRange     = args[3];
+  // private data members
+  Evaluator eval;
+  String xrng;
+  String yrng;
+  String trng;
 
-    Evaluator e = new Evaluator(inp); 
-      
-    System.out.println( e.evalyAt(0) );
-  
+
+  // constructor
+  Plot(String inp, String x, String y, String t) {
+    eval = new Evaluator(inp);
+    xrng = x;
+    yrng = y;
+    trng = t;
   }
-}
 
 
-class Evaluator {
+private class Evaluator {
 
   // private data members
   private String raw;
@@ -52,10 +54,9 @@ class Evaluator {
     String val = String.valueOf(t);            // for evaluation   
     return s.replaceAll("t", val);
   }
-
 }
 
-class Parser {
+private class Parser {
   
   // private data members
   private TokenStream ts;
@@ -92,7 +93,7 @@ class Parser {
       
   private String parseTerm() { // operator precedence is reversed
     String primary;
-    double result = 0;
+    double result;
     result = Double.parseDouble(parsePrimary());
 
     for(;;) {
@@ -114,24 +115,24 @@ class Parser {
     
 
   private String parsePrimary() {
-    String peek = ts.peek(0).type;
-    if(peek == "number") {
+    double result;
+
+    String peek1 = ts.peek(0).type;
+    String peek2 = ts.peek(2).type;
+    if(peek1 == "number" && peek2 == "operator") {
       return ts.get().value;
     }
-    if(peek == "paren") {
+    if(peek2 == "paren") {
       ts.get();
       String e = parseExpr();
       ts.get();
       return e;
     }
-    if(peek == "variable") {
-      return "unbound variable";
-    }
     return "error";
   }
 }
 
-class TokenStream {
+private class TokenStream {
 
   // private data members
   private String raw;
@@ -246,7 +247,7 @@ class TokenStream {
 }
 
 
-class Token { // basic datatype for building a parse tree
+private class Token { // basic datatype for building a parse tree
 
   public String value;
   public String type;
@@ -256,4 +257,19 @@ class Token { // basic datatype for building a parse tree
     type = t;
   
   }
+}
+
+  public static void main(String[] args) {
+
+    String inp        = args[0]; // get sting to parse
+    String x          = args[1];
+    String y          = args[2];
+    String t          = args[3];
+
+    Plot p = new Plot(inp, x, y, t); 
+      
+  
+  }
+
+
 }
