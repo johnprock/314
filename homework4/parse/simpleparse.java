@@ -26,57 +26,65 @@ class Parser {
   
   // parses the token stream and returns the expression value
   public String parseExpr() {
-    String expr;
-    double result;
-
-    if(ts.peek(0).type == "number") {  // Term
-      if(ts.peek(1).value != "+" && ts.peek(1).value != "-") {
-        return parseTerm();
-      }
-    }
-
-    expr = parseExpr();
-
-    if(ts.peek(0).value == "+") {  // Expression + Term
-      ts.get();
-      result = Double.parseDouble(expr) + Double.parseDouble(parseTerm());
-      return String.valueOf(result);
-    }
-    if(ts.peek(0).value == "-") {  // Expression - Term
-      ts.get();
-      result = Double.parseDouble(expr) - Double.parseDouble(parseTerm());
-      return String.valueOf(result);
-    }
-    return "error";
-  }
-      
-  private String parseTerm() {
     String term;
     double result;
+    result = Double.parseDouble(parseTerm());
 
-    if(ts.peek(0).type == "number") {  // Primary
-      return parsePrimary();
+    for(;;) {
+      String peek = ts.peek(0).value;
+      if(peek == "+") {
+        ts.get();
+        result += Double.parseDouble(parseTerm());
+      }
+      if(peek == "-") {
+        ts.get();
+        result -= Double.parseDouble(parseTerm());
+      }
+      if(peek!="+" && peek!="-") {  
+        break;
+      }
     }
-
-    term = parseTerm();
-
-    if(ts.peek(0).value == "*") {  // Term * Primary
-      ts.get();
-      result = Double.parseDouble(term) * Double.parseDouble(parsePrimary());
-      return String.valueOf(result);
-    }
-    if(ts.peek(0).value == "/") {  // Term / Primary
-      ts.get();
-      result = Double.parseDouble(term) / Double.parseDouble(parsePrimary());
-      return String.valueOf(result);
-    }
-    return "error";
+    return String.valueOf(result);
   }
 
 
+      
+  private String parseTerm() { // operator precedence is reversed
+    String primary;
+    double result = 0;
+    result = Double.parseDouble(parsePrimary());
+
+    for(;;) {
+      String peek = ts.peek(0).value;
+      if(peek == "*") {
+        ts.get();
+        result *= Double.parseDouble(parsePrimary());
+      }
+      if(peek == "/") {
+        ts.get();
+        result /= Double.parseDouble(parsePrimary());
+      }
+      if(peek!="*" && peek!="/") {
+        break;
+      }
+    }
+    return String.valueOf(result);
+  }
+    
+
   private String parsePrimary() {
-    if(ts.peek(0).type == "number")  {
+    String peek = ts.peek(0).type;
+    if(peek == "number") {
       return ts.get().value;
+    }
+    if(peek == "paren") {
+      ts.get();
+      String e = parseExpr();
+      ts.get();
+      return e;
+    }
+    if(peek == "variable") {
+      return "unbound variable";
     }
     return "error";
   }
@@ -87,13 +95,12 @@ class TokenStream {
   // private data members
   private String raw;
   private ArrayList<Token> tokens = new ArrayList<Token>();
-  private int pos;  // position in the token stream
+  private int pos = 0;  // position in the token stream
 
   // constructor
   public TokenStream(String r) {
     raw = r;
     raw = raw.replace(" ","");  // remove spaces
-    pos = 0;
 
     for(;;) {   // build a list of tokens
       tokens.add(getToken());
@@ -123,6 +130,9 @@ class TokenStream {
     if( Character.isDigit(raw.charAt(0) )) {
       return getNum();
     }
+    if( Character.isLetter(raw.charAt(0) )) {
+      return getVar();
+    }
     if(raw.charAt(0) == '+') {
       return getOperator("+"); 
     }
@@ -135,16 +145,35 @@ class TokenStream {
     if(raw.charAt(0) == '/') {
       return getOperator("/");
     }
+    if(raw.charAt(0) == '(') {
+      return getParen("(");
+    }
+    if(raw.charAt(0) == ')') {
+      return getParen(")");
+    }
 
     return new Token("error", "");
+  }
+  
+  private Token getVar() {
+    String var = "";
+    for(int i=0; i<raw.length(); i++) {
+      char c = raw.charAt(i);
+      if( !Character.isLetter(c) && !Character.isDigit(c) ) {
+        break;
+      }
+      var = var + var.charAt(i);
+    }
+    raw = raw.substring(var.length());
+    return new Token(var, "variable");
   }
 
   // a number consists of a series of digits 
   private Token getNum() {
     String num = "";
-      for(int i=0; i<raw.length(); i++) {
-        if( !Character.isDigit(raw.charAt(i)) && raw.charAt(i) != '.' ) { 
-           break;
+    for(int i=0; i<raw.length(); i++) {
+      if( !Character.isDigit(raw.charAt(i)) && raw.charAt(i) != '.' ) { 
+         break;
       }
       num = num + raw.charAt(i);
     }
@@ -153,10 +182,16 @@ class TokenStream {
   }
 
   private Token getOperator(String op) {
-    Token t = new Token(op,"operator");   
+    Token t = new Token(op, "operator");   
     raw = raw.substring(1); // consume token from string
     return t;
   }
+  private Token getParen(String p) {
+    Token t = new Token(p, "paren");
+    raw = raw.substring(1);
+    return t;
+  }
+
 
 }
 
