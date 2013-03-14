@@ -171,8 +171,17 @@ class TokenStream {
     if( Character.isDigit(raw.charAt(0) )) {
       return getNum();
     }
-    if( Character.isLetter(raw.charAt(0) )) {
-      return getVar();
+    if(raw.substring(0,3) == "sin") {
+      return getFunc("sin");
+    }
+    if(raw.substring(0,3) == "cos") {
+      return getFunc("cos");
+    }
+    if(raw.substring(0,3) == "tan") {
+      return getFunc("tan");
+    }
+    if(raw.substring(0,3) =="log") {
+      return getFunc("log");
     }
     if(raw.charAt(0) == '+') {
       return getOperator("+"); 
@@ -198,17 +207,16 @@ class TokenStream {
     return new Token("error", "");
   }
   
-  private Token getVar() {
-    String var = "";
-    for(int i=0; i<raw.length(); i++) {
-      char c = raw.charAt(i);
-      if( !Character.isLetter(c) && !Character.isDigit(c) ) {
-        break;
-      }
-      var = var + var.charAt(i);
-    }
-    raw = raw.substring(var.length());
-    return new Token(var, "variable");
+  private Token getFunc(String type) {
+    int start;
+    int end;
+    String args;
+
+    start = raw.indexOf('(');
+    end   = raw.indexOf(')');
+    args  = raw.substring(start+1,end);
+
+    return new Token(args,type);
   }
 
   // a number consists of a series of digits 
@@ -229,13 +237,12 @@ class TokenStream {
     raw = raw.substring(1); // consume token from string
     return t;
   }
+
   private Token getParen(String p) {
     Token t = new Token(p, "paren");
     raw = raw.substring(1);
     return t;
   }
-
-
 }
 
 
