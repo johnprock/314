@@ -148,7 +148,7 @@ private class Parser {
     String peek1 = ts.peek(0).type;
     String peek2 = ts.peek(1).value;
 
-    if(peek1 == "number" && peek2 == "^") { // exponentiation
+   if(peek1 == "number" && peek2 == "^") { // exponentiation
       double base = Double.parseDouble(ts.get().value);
       ts.get();
       double exp  = Double.parseDouble(ts.get().value);
@@ -176,7 +176,9 @@ private class Parser {
 
     String peek = ts.peek(0).value;
     ts.get();
-    result = Double.parseDouble(parseExpr());
+    ts.get();
+    result = Double.parseDouble(ts.get().value);
+    ts.get();
     if(peek == "sin") {
       return String.valueOf(Math.sin(result));
     }
@@ -255,18 +257,19 @@ private class TokenStream {
     if(raw.charAt(0) == '^') {
       return getOperator("^");
     }
-    if(raw.substring(0,3) == "sin") {
+    if(raw.substring(0,3).equals("sin")) {
       return getFunc("sin");
     }
-    if(raw.substring(0,3) == "cos") {
+    if(raw.substring(0,3).equals("cos")) {
       return getFunc("cos");
     }
-    if(raw.substring(0,3) == "tan") {
+    if(raw.substring(0,3).equals("tan")) {
       return getFunc("tan");
     }
-    if(raw.substring(0,3) =="log") {
+    if(raw.substring(0,3).equals("log")) {
       return getFunc("log");
     }
+    System.out.println("Tokenization error");
     return new Token("error", "");
   }
   
