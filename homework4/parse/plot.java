@@ -22,6 +22,14 @@ class Plot {
     trng = t;
   }
 
+  public void testEval(){
+    Evaluator e = new Evaluator(inp);
+    System.out.println(e.evalxAt(0));
+  }
+
+
+//---------------------INNER CLASSES----------------------//
+    
 private class Grapher { // Kalil's Class!
 
   // private data members
@@ -138,9 +146,9 @@ private class Parser {
     double result;
 
     String peek1 = ts.peek(0).type;
-    String peek2 = ts.peek(2).type;
+    String peek2 = ts.peek(1).value;
 
-    if(peek1 == "number" && peek2 == "operator") { // exponentiation
+    if(peek1 == "number" && peek2 == "^") { // exponentiation
       double base = Double.parseDouble(ts.get().value);
       ts.get();
       double exp  = Double.parseDouble(ts.get().value);
@@ -226,19 +234,7 @@ private class TokenStream {
     if( Character.isDigit(raw.charAt(0) )) {
       return getNum();
     }
-    if(raw.substring(0,3) == "sin") {
-      return getFunc("sin");
-    }
-    if(raw.substring(0,3) == "cos") {
-      return getFunc("cos");
-    }
-    if(raw.substring(0,3) == "tan") {
-      return getFunc("tan");
-    }
-    if(raw.substring(0,3) =="log") {
-      return getFunc("log");
-    }
-    if(raw.charAt(0) == '+') {
+   if(raw.charAt(0) == '+') {
       return getOperator("+"); 
     }
     if(raw.charAt(0) == '-') {
@@ -258,6 +254,18 @@ private class TokenStream {
     }
     if(raw.charAt(0) == '^') {
       return getOperator("^");
+    }
+    if(raw.substring(0,3) == "sin") {
+      return getFunc("sin");
+    }
+    if(raw.substring(0,3) == "cos") {
+      return getFunc("cos");
+    }
+    if(raw.substring(0,3) == "tan") {
+      return getFunc("tan");
+    }
+    if(raw.substring(0,3) =="log") {
+      return getFunc("log");
     }
     return new Token("error", "");
   }
@@ -314,9 +322,7 @@ private class Token { // basic datatype for building a parse tree
     String t          = args[3];
 
     Plot p = new Plot(inp, x, y, t); 
-      
+    p.testEval();     
   
   }
-
-
 }
