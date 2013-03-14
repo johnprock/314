@@ -168,6 +168,7 @@ private class Parser {
       return parseFunction();
     }
 
+    System.out.println("Primary parse error");
     return "error";
   }
 
@@ -175,10 +176,11 @@ private class Parser {
     double result;
 
     String peek = ts.peek(0).value;
-    ts.get();
-    ts.get();
-    result = Double.parseDouble(ts.get().value);
-    ts.get();
+    ts.get(); // clear function token
+    ts.get(); // clear (
+    result = Double.parseDouble(parseExpr());
+    ts.get(); // clear )
+
     if(peek == "sin") {
       return String.valueOf(Math.sin(result));
     }
