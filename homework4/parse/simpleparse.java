@@ -6,13 +6,54 @@ class simpleparse {
   public static void main(String[] args) {
 
     String inp = args[0]; // get sting to parse
-    Parser p = new Parser(inp);
+    String xRange     = args[1];
+    String yRange     = args[2];
+    String tRange     = args[3];
 
-    System.out.println( p.parseExpr() );
+    Evaluator e = new Evaluator(inp); 
+      
+    System.out.println( e.evalyAt(0) );
   
   }
 }
 
+
+class Evaluator {
+
+  // private data members
+  private String raw;
+  private String x;
+  private String y;
+
+  // constructor
+  public Evaluator(String r) {
+    raw = r;
+    raw = raw.replace(" ","");  // remove spaces
+    parseRaw();
+  }
+
+  public double evalxAt(double t) {
+    Parser p = new Parser(bindVar(x,t));
+    return Double.parseDouble(p.parseExpr());
+  }
+
+  public double evalyAt(double t) {
+    Parser p = new Parser(bindVar(y,t));
+    return Double.parseDouble(p.parseExpr());
+  }
+
+  private void parseRaw() {
+    int split = raw.indexOf(',');
+    x = raw.substring(1,split);
+    y = raw.substring(split+1,raw.length()-1); 
+  }
+
+  private String bindVar(String s, double t) { // replace variable with number
+    String val = String.valueOf(t);            // for evaluation   
+    return s.replaceAll("t", val);
+  }
+
+}
 
 class Parser {
   
@@ -151,7 +192,9 @@ class TokenStream {
     if(raw.charAt(0) == ')') {
       return getParen(")");
     }
-
+    if(raw.charAt(0) == '^') {
+      return getOperator("^");
+    }
     return new Token("error", "");
   }
   
