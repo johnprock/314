@@ -2,6 +2,9 @@ import java.util.*;
 import java.lang.Error;
 import java.lang.Object;
 import java.lang.Math;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 class Plot {
 
@@ -30,24 +33,64 @@ class Plot {
 
 //---------------------INNER CLASSES----------------------//
     
-private class Grapher { // Kalil's Class!
-
-  // private data members
-  private Evaluator eval;
-  // the evaluator will let you get the value
-  // of the input function at any value of t
-  // by calling the public methods evalxAt()
-  // and evalyAt
-
-  // constructor
-  public Grapher() {
-    eval = new Evaluator(inp);
-  }
+private class Grapher extends JPanel{ // Kalil's Class!
+	
+	private double[] xData; // the x points
+	private double[] yData; // The y points
+	private double[] tData; // To be determined by the t ranges
+	private double[] yAxis; // To be determined by the y ranges
+	private double[] xAxis; // To be determined by the x ranges
+	private double xMin, xMax, yMin, yMax; // We're going to parse these out to get domain/range.
+	
+	  // private data members
+	private Evaluator eval;
+	// the evaluator will let you get the value
+	// of the input function at any value of t
+	// by calling the public methods evalxAt()
+	// and evalyAt
+	
+	// This should evaluate x at every value of t; push into an x array.
+	public double[] fillxData(double[] tData){
+		for (int i = 0; i < tData.length; i++){
+		xData[i] = eval.evalxAt(tData[i]);
+		}
+		return xData;
+	}
+	
+	// This should evaluate y at every value of t; push into a y array.
+	public double[] fillyData(double[] tData){
+		for(int i = 0; i < tData.length; i++){
+		yData[i] = eval.evalyAt(tData[i]);
+		}
+		return yData;
+	}
+	
+	// Pass the arrays (now parsed from the input) to the panel for plotting
+public Grapher(double[] xData, double[] yData){
+		this.xData = xData;
+		this.yData = yData;
+		eval = new Evaluator(inp);
+	}
+	
+	// Create window
+private void TwoDMagic() {
+	JFrame frame = new JFrame("Parametric Plotter");
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	JLabel aLabel = new JLabel("This is a test.");
+	frame.getContentPane().add(aLabel, BorderLayout.CENTER);
+	
+	// Display
+	frame.setSize(600,600);
+	frame.setLocation(300,300);
+	frame.pack();
+	frame.setVisible(true);
+}
 
   // methods that plots stuff here
 
 }
 
+	
 private class Evaluator {
 
   // private data members
@@ -368,8 +411,13 @@ private class Token { // basic datatype for building a parse tree
     String y          = args[2];
     String t          = args[3];
 
+	// dummy variables
+	double yData[] = new double[100];
+	double xData[] = new double[100];
     Plot p = new Plot(inp, x, y, t); 
     p.testEval();     
+	Plot.Grapher g = p.new Grapher(yData,xData);
+	g.TwoDMagic();
   
   }
 }
