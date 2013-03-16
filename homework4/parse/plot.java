@@ -5,6 +5,7 @@ import java.lang.Math;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.awt.geom.*;
 
 class Plot {
 
@@ -33,21 +34,27 @@ class Plot {
 
 //---------------------INNER CLASSES----------------------//
     
-private class Grapher extends JPanel{ // Kalil's Class!
+protected class Grapher extends JPanel{ // Kalil's Class!
 	
 	private double[] xData; // the x points
 	private double[] yData; // The y points
-	private double[] tData; // To be determined by the t ranges
+	private double[] tData = {1,2,3,4,5,6,7,8,9,10}; // To be determined by the t ranges
 	private double[] yAxis; // To be determined by the y ranges
 	private double[] xAxis; // To be determined by the x ranges
 	private double xMin, xMax, yMin, yMax; // We're going to parse these out to get domain/range.
+	private int padding = 30; // gives us some offset when we use paint component
 	
 	  // private data members
 	private Evaluator eval;
+	//		eval = new Evaluator(inp);
 	// the evaluator will let you get the value
 	// of the input function at any value of t
 	// by calling the public methods evalxAt()
 	// and evalyAt
+	
+	public double parseRange(){
+	return 2.0;
+	}
 	
 	// This should evaluate x at every value of t; push into an x array.
 	public double[] fillxData(double[] tData){
@@ -66,30 +73,40 @@ private class Grapher extends JPanel{ // Kalil's Class!
 	}
 	
 	// Pass the arrays (now parsed from the input) to the panel for plotting
-public Grapher(double[] xData, double[] yData){
-		this.xData = xData;
-		this.yData = yData;
-		eval = new Evaluator(inp);
+	public void paintComponent(Graphics graph){
+		super.paintComponent(graph); // Learned how to over-ride via Java website
+		Graphics2D TDGraph = (Graphics2D) graph;
+		TDGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+             RenderingHints.VALUE_ANTIALIAS_ON);
+			 
+		int hFrame = getHeight();
+		int wFrame = getWidth();
+		
+		// Draw x axis
+		TDGraph.draw(new Line2D.Double(padding, padding, padding, hFrame-padding));
+		// Draw y axis
+		 TDGraph.draw(new Line2D.Double(padding, hFrame-padding, wFrame-padding, hFrame-padding));
 	}
-	
+
+}
+
 	// Create window
 private void TwoDMagic() {
 	JFrame frame = new JFrame("Parametric Plotter");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	JLabel aLabel = new JLabel("This is a test.");
-	frame.getContentPane().add(aLabel, BorderLayout.CENTER);
+	//JLabel aLabel = new JLabel("This is a test.");
+	//frame.getContentPane().add(aLabel, BorderLayout.CENTER);
 	
 	// Display
-	frame.setSize(600,600);
-	frame.setLocation(300,300);
+	//frame.setSize(300,300);
+	frame.setPreferredSize(new Dimension(900, 900));
+	frame.setLocation(0,0);
 	frame.pack();
 	frame.setVisible(true);
+	frame.add(new Grapher());
 }
 
   // methods that plots stuff here
-
-}
-
 	
 private class Evaluator {
 
@@ -416,8 +433,8 @@ private class Token { // basic datatype for building a parse tree
 	double xData[] = new double[100];
     Plot p = new Plot(inp, x, y, t); 
     p.testEval();     
-	Plot.Grapher g = p.new Grapher(yData,xData);
-	g.TwoDMagic();
-  
+	//Plot.Grapher g = p.new Grapher();
+	//g.TwoDMagic();
+	p.TwoDMagic();
   }
 }
