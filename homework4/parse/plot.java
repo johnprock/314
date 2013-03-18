@@ -395,6 +395,41 @@ private class TokenStream {
     if(raw.length() == 0) {
       return new Token("empty","");
     }
+
+    if(raw.length() >= 4) {
+      if(raw.substring(0,4).equals("cosh")) {
+        return getFunc("cosh");
+      }
+      if(raw.substring(0,4).equals("sinh")) {
+        return getFunc("sinh");
+      }
+      if(raw.substring(0,4).equals("tanh")) {
+        return getFunc("tanh");
+      } 
+    }
+    
+
+    if(raw.length() >= 3) {
+      if(raw.substring(0,3).equals("sin")) {
+        return getFunc("sin");
+      }
+      if(raw.substring(0,3).equals("cos")) {
+        return getFunc("cos");
+      }
+      if(raw.substring(0,3).equals("tan")) {
+        return getFunc("tan");
+      }
+      if(raw.substring(0,3).equals("log")) {
+        return getFunc("log");
+      }
+      if(raw.substring(0,3).equals("abs")) {
+        return getFunc("abs");
+      }
+      if(raw.substring(0,3).equals("exp")) {
+        return getFunc("exp");
+      }
+    }
+
     if( Character.isDigit(raw.charAt(0) )) {
       return getNum();
     }
@@ -419,33 +454,7 @@ private class TokenStream {
     if(raw.charAt(0) == '^') {
       return getOperator("^");
     }
-    if(raw.substring(0,3).equals("sin")) {
-      return getFunc("sin");
-    }
-    if(raw.substring(0,4).equals("cosh")) {
-      return getFunc("cosh");
-    }
-    if(raw.substring(0,4).equals("sinh")) {
-      return getFunc("sinh");
-    }
-    if(raw.substring(0,4).equals("tanh")) {
-      return getFunc("tanh");
-    }
-    if(raw.substring(0,3).equals("cos")) {
-      return getFunc("cos");
-    }
-    if(raw.substring(0,3).equals("tan")) {
-      return getFunc("tan");
-    }
-    if(raw.substring(0,3).equals("log")) {
-      return getFunc("log");
-    }
-    if(raw.substring(0,3).equals("abs")) {
-      return getFunc("abs");
-    }
-    if(raw.substring(0,3).equals("exp")) {
-      return getFunc("exp");
-    }
+    
    
     System.out.println("Tokenization error");
     System.exit(1);
