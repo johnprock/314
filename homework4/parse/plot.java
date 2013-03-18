@@ -503,9 +503,6 @@ private class Token { // basic datatype for building a parse tree
     String y          = args[2];
     String t          = args[3];
 
-	// dummy variables
-	double yData[] = new double[100];
-	double xData[] = new double[100];
     Plot p = new Plot(inp, x, y, t); 
     p.testEval();     
 	//Plot.Grapher g = p.new Grapher();
