@@ -43,6 +43,17 @@ private void TwoDMagic() {
 	frame.add(new Grapher());
 }
 
+public static void waiting (int n){
+        
+        long t0, t1;
+
+        t0 =  System.currentTimeMillis();
+
+        do{
+            t1 = System.currentTimeMillis();
+        }
+        while ((t1 - t0) < (n * 1000));
+    }
   
 //---------------------INNER CLASSES----------------------//
     
@@ -152,15 +163,31 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 		// Draw y axis
 		 //TDGraph.draw(new Line2D.Double(padding, hFrame-padding, wFrame-padding, hFrame-padding));
 		 TDGraph.draw(new Line2D.Double(wFrame/2,padding,wFrame/2,hFrame)); // has format x1 y1 x2 y2
-		 double yAxis = (hFrame-padding)/(yMax); // To be determined by the y ranges
-		 double xAxis = (wFrame-padding)/(xData.length-1); // To be determined by the x ranges
+		 
+		 double xScale = wFrame/(xMax-xMin); //(wFrame-padding)/(xData.length-1); // To be determined by the x ranges
+		 double yScale = hFrame/(yMax-yMin); //(hFrame-padding)/(yMax); // To be determined by the y ranges
 		 TDGraph.setPaint(Color.blue);
 		 
-		 for(int i = 0; i < xData.length; i++){
-		        double xc = padding + i*xAxis;
-				double yc = hFrame - padding - yAxis*xData[i];
-				TDGraph.fill(new Ellipse2D.Double(xc-2, yc-2, 4, 4));
+		 // Graphs points
+		 for(int i = 0; i < yData.length; i++){
+				System.out.println("Plotted point...");
+		        double xc = padding + xData[i]*xScale + (wFrame/2);
+				double yc = padding + yData[i]*yScale + (hFrame/2);
+				Ellipse2D s = new Ellipse2D.Double(xc-2, yc-2, 4, 4);
+				TDGraph.fill(s); //x,y, height/width of ellipse
+				
+				
+				// debugger functions
+				System.out.println(s.getX());
+				System.out.println(s.getY());
+				//System.out.println(xScale);
+				//System.out.println(yScale);
+				
+				//System.out.println("Waiting...");
+				//waiting(1);
+				
 			}
+			
 		System.out.println(xMin);
 		System.out.println(xMax);
 		System.out.println(yMin);
