@@ -31,49 +31,113 @@ class Plot {
     System.out.println(e.evalxAt(0));
   }
 
+  // Creates window, does stuff
+private void TwoDMagic() {
+	JFrame frame = new JFrame("Parametric Plotter");
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	
+	frame.setPreferredSize(new Dimension(900, 900));
+	frame.setLocation(0,0);
+	frame.pack();
+	frame.setVisible(true);
+	frame.add(new Grapher());
+}
 
+  
 //---------------------INNER CLASSES----------------------//
     
 protected class Grapher extends JPanel{ // Kalil's Class!
 	
 	private double[] xData; // the x points
 	private double[] yData; // The y points
-	private double[] tData = {1,2,3,4,5,6,7,8,9,10}; // To be determined by the t ranges
-	private double[] yAxis; // To be determined by the y ranges
-	private double[] xAxis; // To be determined by the x ranges
-	private double xMin, xMax, yMin, yMax; // We're going to parse these out to get domain/range.
-	private int padding = 30; // gives us some offset when we use paint component
+	private double[] tData; // To be determined by the t ranges
+	private double xMin, xMax, yMin, yMax, tMin, tMax; // We're going to parse these out to get domain/range.
+	private int padding = 40; // gives us some offset when we use paint component
 	
-	  // private data members
+	private double[] xRange, yRange, tRange;
 	private Evaluator eval;
 	//		eval = new Evaluator(inp);
-	// the evaluator will let you get the value
-	// of the input function at any value of t
-	// by calling the public methods evalxAt()
-	// and evalyAt
+	  // private data members
 	
-	public double parseRange(){
-	return 2.0;
+	// Should parse x y t
+	public double[] parseRange(String range){
+		int start = 2;
+		int end;
+		String yield;
+		String yield2;
+		double min;
+		double max;
+		
+		end = range.indexOf("..");
+		yield = range.substring(start, end);
+		min = Double.parseDouble(yield);
+		
+		yield2 = range.substring(end+2);
+		max = Double.parseDouble(yield2);
+		double[] myArray;
+		myArray = new double[2];
+		myArray[0] = min;
+		myArray[1] = max;
+		return myArray;
+	}
+
+	// Gives an xMin and xMax!
+	public void fillRanges(){
+	xRange = parseRange(xrng);
+	yRange = parseRange(yrng);
+	tRange = parseRange(trng);
+	xMin = xRange[0];
+	xMax = xRange[1];
+	yMin = yRange[0];
+	yMax = yRange[1];
+	tMin = tRange[0];
+	tMax = tRange[1];
 	}
 	
-	// This should evaluate x at every value of t; push into an x array.
-	public double[] fillxData(double[] tData){
-		for (int i = 0; i < tData.length; i++){
-		xData[i] = eval.evalxAt(tData[i]);
+	// note that you can change the array size of t to make many more values of t to evaluate at... trying 100.
+	public void filltData(){
+		if(tMin > 0 && tMax > 0 ){ // in the case that they're both positive
+			tData = new double[(int)(tMax-tMin)];
+		} else if (tMin < 0 && tMax > 0){
+			tData = new double[(int)((tMax + Math.abs(tMin)))];
+		} else{
+			tData= new double[(int)(Math.abs(tMin)-(int)Math.abs(tMax))]; // this a total hack fix.
 		}
-		return xData;
+		// array initialization works; must fix placing values in array
+		for(double i = tMin, j = 0; i < ((tMax)+1) && j < tData.length; i++, j++){ // can change min/max by scalar factors for more points... I think.
+			tData[(int)j] = i; // this is the single worst for loop in existence.
+		}
+		
+	}
+	
+	
+	// This should evaluate x at every value of t; push into an x array.
+	public void fillxData(double[] tData){
+		xData = new double[tData.length];
+		Evaluator e = new Evaluator(inp);
+		for (int i = 0; i < xData.length; i++){
+			xData[i] = e.evalxAt(tData[i]);
+		}
+
 	}
 	
 	// This should evaluate y at every value of t; push into a y array.
-	public double[] fillyData(double[] tData){
-		for(int i = 0; i < tData.length; i++){
-		yData[i] = eval.evalyAt(tData[i]);
+	public void fillyData(double[] tData){
+		yData = new double[tData.length];
+		 Evaluator e = new Evaluator(inp);
+		for(int i = 0; i < yData.length; i++){
+			yData[i] = e.evalyAt(tData[i]);
 		}
-		return yData;
+
 	}
 	
 	// Pass the arrays (now parsed from the input) to the panel for plotting
 	public void paintComponent(Graphics graph){
+		fillRanges(); // fills the components mayn
+		filltData();
+		fillxData(tData); // fills x arrays
+		fillyData(tData); // fills y arrays
+		
 		super.paintComponent(graph); // Learned how to over-ride via Java website
 		Graphics2D TDGraph = (Graphics2D) graph;
 		TDGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -83,28 +147,39 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 		int wFrame = getWidth();
 		
 		// Draw x axis
-		TDGraph.draw(new Line2D.Double(padding, padding, padding, hFrame-padding));
+		//TDGraph.draw(new Line2D.Double(padding, padding, padding, hFrame-padding));
+		TDGraph.draw(new Line2D.Double(padding,hFrame/2,wFrame-padding,hFrame/2)); // has format x1 y1 x2 y2
 		// Draw y axis
-		 TDGraph.draw(new Line2D.Double(padding, hFrame-padding, wFrame-padding, hFrame-padding));
-	}
-
+		 //TDGraph.draw(new Line2D.Double(padding, hFrame-padding, wFrame-padding, hFrame-padding));
+		 TDGraph.draw(new Line2D.Double(wFrame/2,padding,wFrame/2,hFrame)); // has format x1 y1 x2 y2
+		 double yAxis = (hFrame-padding)/(yMax); // To be determined by the y ranges
+		 double xAxis = (wFrame-padding)/(xData.length-1); // To be determined by the x ranges
+		 TDGraph.setPaint(Color.blue);
+		 
+		 for(int i = 0; i < xData.length; i++){
+		        double xc = padding + i*xAxis;
+				double yc = hFrame - padding - yAxis*xData[i];
+				TDGraph.fill(new Ellipse2D.Double(xc-2, yc-2, 4, 4));
+			}
+		System.out.println(xMin);
+		System.out.println(xMax);
+		System.out.println(yMin);
+		System.out.println(yMax);
+		System.out.println(tMin);
+		System.out.println(tMax);
+		System.out.println(tData.length);
+		for(int i = 0; i < tData.length; i++){
+		System.out.println("T Value:");
+		System.out.println(tData[i]);
+		System.out.println("X Value:");
+		System.out.println(xData[i]);
+		System.out.println("Y Value:");
+		System.out.println(yData[i]);
+		}
+       }
 }
 
-	// Create window
-private void TwoDMagic() {
-	JFrame frame = new JFrame("Parametric Plotter");
-	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	//JLabel aLabel = new JLabel("This is a test.");
-	//frame.getContentPane().add(aLabel, BorderLayout.CENTER);
-	
-	// Display
-	//frame.setSize(300,300);
-	frame.setPreferredSize(new Dimension(900, 900));
-	frame.setLocation(0,0);
-	frame.pack();
-	frame.setVisible(true);
-	frame.add(new Grapher());
-}
+
 
   // methods that plots stuff here
 	
@@ -438,3 +513,5 @@ private class Token { // basic datatype for building a parse tree
 	p.TwoDMagic();
   }
 }
+
+//java Plot "[1,1]" -1..1 -2..2 -3..3
