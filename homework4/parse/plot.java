@@ -246,8 +246,10 @@ private class Evaluator {
   }
 
   private String bindVar(String s, double t) { // replace variable with number
-    String val = String.valueOf(t);            // for evaluation   
-    return s.replaceAll("t", val);
+    String val = String.valueOf(t);     // for evaluation  
+    s = s.replaceAll("tan", "pan");
+    s = s.replaceAll("t", val);
+    return s;
   }
 }
 
@@ -361,7 +363,7 @@ private class Parser {
     if(peek == "cos") {
       return String.valueOf(Math.cos(result));
     }
-    if(peek == "tan") {
+    if(peek == "pan") {
       return String.valueOf(Math.tan(result));
     }
     if(peek == "log") {
@@ -379,7 +381,7 @@ private class Parser {
     if(peek == "cosh") {
       return String.valueOf(Math.cosh(result));
     }
-    if(peek == "tanh") {
+    if(peek == "panh") {
       return String.valueOf(Math.tanh(result));
     }
     System.out.println("Function parse error");
@@ -459,14 +461,14 @@ private class TokenStream {
     if(raw.substring(0,4).equals("sinh")) {
       return getFunc("sinh");
     }
-    if(raw.substring(0,4).equals("tanh")) {
-      return getFunc("tanh");
+    if(raw.substring(0,4).equals("panh")) {
+      return getFunc("panh");
     }
     if(raw.substring(0,3).equals("cos")) {
       return getFunc("cos");
     }
-    if(raw.substring(0,3).equals("tan")) {
-      return getFunc("tan");
+    if(raw.substring(0,3).equals("pan")) {
+      return getFunc("pan");
     }
     if(raw.substring(0,3).equals("log")) {
       return getFunc("log");
