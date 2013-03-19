@@ -1,3 +1,8 @@
+// Kalil Armstrong
+// Patrick Rock
+// Assignment 6
+// 3/18/2013
+
 import java.util.*;
 import java.lang.Error;
 import java.lang.Object;
@@ -115,21 +120,27 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 	tMax = tRange[1];
 	}
 	
-
 	public void filltData(){
+		tData = new double[1000];
+		double magnitude;
+		double stepSize;
+		// calculate magnitude
 		if(tMin > 0 && tMax > 0 ){ // in the case that they're both positive
-			tData = new double[(int)((tMax-tMin)+1)];
+			magnitude = (tMax-tMin)+1;
 		} else if (tMin < 0 && tMax > 0){
-			tData = new double[(int)((tMax + Math.abs(tMin))+1)];
+			magnitude = (tMax + Math.abs(tMin))+1;
 		} else{
-			tData= new double[(int)(Math.abs(tMin)-(int)Math.abs(tMax))+1]; // this a total hack fix.
+		    magnitude = (Math.abs(tMin)-(int)Math.abs(tMax))+1; // this a total hack fix.
 		}
-		for(double i = tMin, j = 0; i < ((tMax)+1) && j < tData.length; i++, j++){ 
-			tData[(int)j] = i; // this is the single worst for loop in existence.
+		stepSize = magnitude/1000;
+		System.out.println(stepSize);
+		for(int i = 0; i < 1000; i++){
+			tData[i] = stepSize*i;
+			System.out.println(tData[i]);
 		}
-		
-	}
 	
+	}
+
 	
 	// This should evaluate x at every value of t; push into an x array.
 	public void fillxData(double[] tData){
@@ -137,9 +148,9 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 		Evaluator e = new Evaluator(inp);
 		for (int i = 0; i < xData.length; i++){
 			xData[i] = e.evalxAt(tData[i]);
-			System.out.print("X value");
-			System.out.println(":");
-			System.out.println(xData[i]);
+			// System.out.print("X value");
+			// System.out.println(":");
+			// System.out.println(xData[i]);
 		}
 
 	}
@@ -150,9 +161,9 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 		 Evaluator e = new Evaluator(inp);
 		for(int i = 0; i < yData.length; i++){
 			yData[i] = e.evalyAt(tData[i]);
-			System.out.print("X value");
-			System.out.println(":");
-			System.out.println(yData[i]);
+			// System.out.print("X value");
+			// System.out.println(":");
+			// System.out.println(yData[i]);
 		}
 
 	}
@@ -202,9 +213,9 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 			int y1 = (int)pointList[i].y;
 			int x2 = (int)pointList[i+1].x;
 			int y2 = (int)pointList[i+1].y;
-			System.out.print(x1);
-			System.out.print(",");
-			System.out.println(y1);
+			// System.out.print(x1);
+			// System.out.print(",");
+			// System.out.println(y1);
 			TDGraph.drawLine(x1,y1,x2,y2);
 		}
 		
