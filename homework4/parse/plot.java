@@ -301,6 +301,11 @@ private class Parser {
         ts.get();
         result /= Double.parseDouble(parsePrimary());
       }
+      if(peek == "^") {
+        ts.get();
+        double exp = Double.parseDouble(parsePrimary());
+        result = Math.pow(result,exp);
+      }
       if(peek!="*" && peek!="/") {
         break;
       }
@@ -350,11 +355,6 @@ private class Parser {
     result = Double.parseDouble(parseExpr());
     ts.get(); // clear )
 
-	if(peek == "pow") {
-	  double exp = Double.parseDouble(parseExpr());
-	  ts.get(); // clear 
-	  return String.valueOf(Math.pow(result, exp));
-	  }
     if(peek == "sin") {
       return String.valueOf(Math.sin(result));
     }
@@ -432,9 +432,6 @@ private class TokenStream {
    if(raw.charAt(0) == '+') {
       return getOperator("+"); 
     }
-	if(raw.charAt(0) == ',') {
-	  return getOperator(",");
-	  }
     if(raw.charAt(0) == '-') {
       return getOperator("-");
     }
@@ -477,9 +474,6 @@ private class TokenStream {
     if(raw.substring(0,3).equals("abs")) {
       return getFunc("abs");
     }
-	if(raw.substring(0,3).equals("pow")) {
-		return getFunc("pow");
-	}
     if(raw.substring(0,3).equals("exp")) {
       return getFunc("exp");
     }
