@@ -36,7 +36,7 @@ private void TwoDMagic() {
 	JFrame frame = new JFrame("Parametric Plotter");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
-	frame.setPreferredSize(new Dimension(900, 900));
+	frame.setPreferredSize(new Dimension(1000, 1000));
 	frame.setLocation(0,0);
 	frame.pack();
 	frame.setVisible(true);
@@ -62,15 +62,25 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 	private double[] xData; // the x points
 	private double[] yData; // The y points
 	private double[] tData; // To be determined by the t ranges
+	private double[] Points;
 	private double xMin, xMax, yMin, yMax, tMin, tMax; // We're going to parse these out to get domain/range.
 	private int padding = 40; // gives us some offset when we use paint component
 	
 	private double[] xRange, yRange, tRange;
 	private Evaluator eval;
-	//		eval = new Evaluator(inp);
-	  // private data members
 	
-	// Should parse x y t
+	public class Point{
+	
+		Point(double x1,double y1){
+		x=x1;
+		y=y1;
+		}
+	
+	public double x;
+	public double y;
+	}
+	
+	// Pulls ranges
 	public double[] parseRange(String range){
 		int start = 2;
 		int end;
@@ -105,17 +115,16 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 	tMax = tRange[1];
 	}
 	
-	// note that you can change the array size of t to make many more values of t to evaluate at... trying 100.
+
 	public void filltData(){
 		if(tMin > 0 && tMax > 0 ){ // in the case that they're both positive
-			tData = new double[(int)(tMax-tMin)];
+			tData = new double[(int)((tMax-tMin)+1)];
 		} else if (tMin < 0 && tMax > 0){
-			tData = new double[(int)((tMax + Math.abs(tMin)))];
+			tData = new double[(int)((tMax + Math.abs(tMin))+1)];
 		} else{
-			tData= new double[(int)(Math.abs(tMin)-(int)Math.abs(tMax))]; // this a total hack fix.
+			tData= new double[(int)(Math.abs(tMin)-(int)Math.abs(tMax))+1]; // this a total hack fix.
 		}
-		// array initialization works; must fix placing values in array
-		for(double i = tMin, j = 0; i < ((tMax)+1) && j < tData.length; i++, j++){ // can change min/max by scalar factors for more points... I think.
+		for(double i = tMin, j = 0; i < ((tMax)+1) && j < tData.length; i++, j++){ 
 			tData[(int)j] = i; // this is the single worst for loop in existence.
 		}
 		
@@ -128,6 +137,9 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 		Evaluator e = new Evaluator(inp);
 		for (int i = 0; i < xData.length; i++){
 			xData[i] = e.evalxAt(tData[i]);
+			System.out.print("X value");
+			System.out.println(":");
+			System.out.println(xData[i]);
 		}
 
 	}
@@ -138,6 +150,9 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 		 Evaluator e = new Evaluator(inp);
 		for(int i = 0; i < yData.length; i++){
 			yData[i] = e.evalyAt(tData[i]);
+			System.out.print("X value");
+			System.out.println(":");
+			System.out.println(yData[i]);
 		}
 
 	}
@@ -148,7 +163,6 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 		filltData();
 		fillxData(tData); // fills x arrays
 		fillyData(tData); // fills y arrays
-		
 		super.paintComponent(graph); // Learned how to over-ride via Java website
 		Graphics2D TDGraph = (Graphics2D) graph;
 		TDGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -158,51 +172,42 @@ protected class Grapher extends JPanel{ // Kalil's Class!
 		int wFrame = getWidth();
 		
 		// Draw x axis
-		//TDGraph.draw(new Line2D.Double(padding, padding, padding, hFrame-padding));
 		TDGraph.draw(new Line2D.Double(padding,hFrame/2,wFrame-padding,hFrame/2)); // has format x1 y1 x2 y2
+		
 		// Draw y axis
-		 //TDGraph.draw(new Line2D.Double(padding, hFrame-padding, wFrame-padding, hFrame-padding));
 		 TDGraph.draw(new Line2D.Double(wFrame/2,padding,wFrame/2,hFrame)); // has format x1 y1 x2 y2
 		 
 		 double xScale = wFrame/(xMax-xMin); //(wFrame-padding)/(xData.length-1); // To be determined by the x ranges
-		 double yScale = hFrame/(yMax-yMin); //(hFrame-padding)/(yMax); // To be determined by the y ranges
+		 double yScale = -1*(hFrame/(yMax-yMin)); //(hFrame-padding)/(yMax); // To be determined by the y ranges
 		 TDGraph.setPaint(Color.blue);
 		 
 		 // Graphs points
+		 Point[] pointList;
+		 pointList = new Point[yData.length];
 		 for(int i = 0; i < yData.length; i++){
-				System.out.println("Plotted point...");
-		        double xc = padding + xData[i]*xScale + (wFrame/2);
-				double yc = padding + yData[i]*yScale + (hFrame/2);
-				Ellipse2D s = new Ellipse2D.Double(xc-2, yc-2, 4, 4);
+				double x1, y1;
+		        x1 = xData[i]*xScale + (wFrame/2);
+				y1 = yData[i]*yScale + (hFrame/2);
+				Point p = new Point(x1,y1);
+				pointList[i] = p;
+				Ellipse2D s = new Ellipse2D.Double(x1-2, y1-2, 4, 4);
 				TDGraph.fill(s); //x,y, height/width of ellipse
-				
-				
-				// debugger functions
-				System.out.println(s.getX());
-				System.out.println(s.getY());
-				//System.out.println(xScale);
-				//System.out.println(yScale);
-				
-				//System.out.println("Waiting...");
-				//waiting(1);
 				
 			}
 			
-		System.out.println(xMin);
-		System.out.println(xMax);
-		System.out.println(yMin);
-		System.out.println(yMax);
-		System.out.println(tMin);
-		System.out.println(tMax);
-		System.out.println(tData.length);
-		for(int i = 0; i < tData.length; i++){
-		System.out.println("T Value:");
-		System.out.println(tData[i]);
-		System.out.println("X Value:");
-		System.out.println(xData[i]);
-		System.out.println("Y Value:");
-		System.out.println(yData[i]);
+		// Lines
+		for(int i = 0; i < yData.length- 1; i++){
+			//System.out.println("Drawing lines.");
+			int x1 = (int)pointList[i].x;
+			int y1 = (int)pointList[i].y;
+			int x2 = (int)pointList[i+1].x;
+			int y2 = (int)pointList[i+1].y;
+			System.out.print(x1);
+			System.out.print(",");
+			System.out.println(y1);
+			TDGraph.drawLine(x1,y1,x2,y2);
 		}
+		
        }
 }
 
@@ -317,17 +322,11 @@ private class Parser {
      return String.valueOf(result);
    }
 
-   if(peek1 == "number" && peek2 == "^") { // exponentiation
-      double base = Double.parseDouble(ts.get().value);
-      ts.get();
-      double exp  = Double.parseDouble(ts.get().value);
-      result = Math.pow(base, exp);
-      return String.valueOf(result);
-    }
     if(peek1 == "number") { // literal
       return ts.get().value;
     }
-    if(peek2 == "paren") { // parenthetical expression
+	
+    if(peek1 == "paren") { // parenthetical expression
       ts.get();
       String e = parseExpr();
       ts.get();
@@ -351,6 +350,11 @@ private class Parser {
     result = Double.parseDouble(parseExpr());
     ts.get(); // clear )
 
+	if(peek == "pow") {
+	  double exp = Double.parseDouble(parseExpr());
+	  ts.get(); // clear 
+	  return String.valueOf(Math.pow(result, exp));
+	  }
     if(peek == "sin") {
       return String.valueOf(Math.sin(result));
     }
@@ -422,47 +426,15 @@ private class TokenStream {
     if(raw.length() == 0) {
       return new Token("empty","");
     }
-
-    if(raw.length() >= 4) {
-      if(raw.substring(0,4).equals("cosh")) {
-        return getFunc("cosh");
-      }
-      if(raw.substring(0,4).equals("sinh")) {
-        return getFunc("sinh");
-      }
-      if(raw.substring(0,4).equals("tanh")) {
-        return getFunc("tanh");
-      } 
-    }
-    
-
-    if(raw.length() >= 3) {
-      if(raw.substring(0,3).equals("sin")) {
-        return getFunc("sin");
-      }
-      if(raw.substring(0,3).equals("cos")) {
-        return getFunc("cos");
-      }
-      if(raw.substring(0,3).equals("tan")) {
-        return getFunc("tan");
-      }
-      if(raw.substring(0,3).equals("log")) {
-        return getFunc("log");
-      }
-      if(raw.substring(0,3).equals("abs")) {
-        return getFunc("abs");
-      }
-      if(raw.substring(0,3).equals("exp")) {
-        return getFunc("exp");
-      }
-    }
-
     if( Character.isDigit(raw.charAt(0) )) {
       return getNum();
     }
    if(raw.charAt(0) == '+') {
       return getOperator("+"); 
     }
+	if(raw.charAt(0) == ',') {
+	  return getOperator(",");
+	  }
     if(raw.charAt(0) == '-') {
       return getOperator("-");
     }
@@ -481,7 +453,36 @@ private class TokenStream {
     if(raw.charAt(0) == '^') {
       return getOperator("^");
     }
-    
+    if(raw.substring(0,3).equals("sin")) {
+      return getFunc("sin");
+    }
+    if(raw.substring(0,4).equals("cosh")) {
+      return getFunc("cosh");
+    }
+    if(raw.substring(0,4).equals("sinh")) {
+      return getFunc("sinh");
+    }
+    if(raw.substring(0,4).equals("tanh")) {
+      return getFunc("tanh");
+    }
+    if(raw.substring(0,3).equals("cos")) {
+      return getFunc("cos");
+    }
+    if(raw.substring(0,3).equals("tan")) {
+      return getFunc("tan");
+    }
+    if(raw.substring(0,3).equals("log")) {
+      return getFunc("log");
+    }
+    if(raw.substring(0,3).equals("abs")) {
+      return getFunc("abs");
+    }
+	if(raw.substring(0,3).equals("pow")) {
+		return getFunc("pow");
+	}
+    if(raw.substring(0,3).equals("exp")) {
+      return getFunc("exp");
+    }
    
     System.out.println("Tokenization error");
     System.exit(1);
