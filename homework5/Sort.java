@@ -4,6 +4,30 @@ import java.awt.*;
 import javax.swing.*;
 
 
+
+class Animate extends JComponent {
+
+  public void paint(Graphics g) {
+    g.drawRect (50, 50, 100, 100);
+    g.drawRect (150, 50, 100, 100);
+    g.drawRect (250, 50, 100, 100);
+    g.drawRect (350, 50, 100, 100);
+    g.drawRect (450, 50, 100, 100);
+    g.drawRect (550, 50, 100, 100);
+  }
+}
+
+class TextFrame extends JFrame {
+
+  public TextFrame() {
+    setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
+    setBounds(10,10,700,250);
+    getContentPane().add(new Animate());
+    setVisible(true);
+  }
+}
+
+
 class Sort {
 
   private Algorithm bubble;
@@ -18,31 +42,14 @@ class Sort {
     bubble = new Bubble(size);
   }
 
-  public void draw() {
-    JFrame frame = new JFrame("Animated Sorting");
-    frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-    frame.setPreferredSize(new Dimension(1000,1000));
-    frame.setLocation(0,0);
-    frame.pack();
-    frame.setVisible(true);
-    frame.add(new Plot());
-
+  public void run_test() {
+    bubble.test();
   }
 
 
+//-------------SORTING ALGORITHMS--------------//
 
-  //----------------INNER CLASSES---------------//
-  
-
- private class Plot extends JPanel {
-
-   public void paintComponent(Graphics g) {
-     super.paintComponent(g);
-     this.setBackground(Color.WHITE);
-   }
- }
-
-  private abstract class Algorithm {
+ private abstract class Algorithm {
 
     protected Vector<Integer> s;
     protected int i;
@@ -63,10 +70,18 @@ class Sort {
 
     //prints the sequence
     public void print() {
+      System.out.println("--------------");
       for(int i=0; i<s.size(); i++) {
         System.out.println(s.get(i));
       }
+     System.out.println("--------------");
     }
+    public void test() {
+      print();
+      while(step() != 0);
+      print();
+    }
+
 
     // gets the sequence
     public Vector<Integer> get() {
@@ -88,7 +103,7 @@ class Sort {
     }
 
     public int step() {
-      if(i == s.size()) { // bubble floated to the top
+      if(i == s.size()-1) { // bubble floated to the top
         i=0;
         j++;
       }
@@ -96,8 +111,9 @@ class Sort {
         return 0;
       }
       if(s.get(i) > s.get(i+1)) {
-        swap(i,i+1);
+        swap(i,i+1); 
       }
+      i++;
       return 1;
     }
 
@@ -129,7 +145,8 @@ class Sort {
 
   public static void main(String[] args) {
     Sort sort = new Sort(10);
-    sort.draw();
-  }
+    sort.run_test();
 
+    TextFrame win = new TextFrame();
+ }
 }
