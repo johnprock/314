@@ -8,12 +8,17 @@ import javax.swing.*;
 class Animate extends JComponent {
 
   private int xcoord;
+  private int ycoord;
+  private int size;
   private String name;
   private Sort s;
   private Algorithm a;
 
-  public Animate(int x, String n, int size, int type) {
+  // constructor
+  public Animate(int x, int y, String n, int sze, int type) {
     xcoord = x;
+    ycoord = y;
+    size = sze;
     name = n;
     switch(type) {
       case 0: a = new Bubble(size);
@@ -26,19 +31,33 @@ class Animate extends JComponent {
   }
 
   public void paintComponent(Graphics g) {
-    g.drawRect (xcoord, 50, 100, 100);
-    g.drawString(name, xcoord, 165);
+    g.setColor(Color.black);
+    g.drawRect (xcoord, ycoord, 150, 150);
+    g.drawString(name, xcoord, ycoord + 165);
+    drawBars(g);
+  }
+
+  private void drawBars(Graphics g) {
+
+    g.setColor(Color.blue);
+    int width = 150/size;
+    int height = 150/size;
+    Vector<Integer> v = a.get();
+
+    for(int i=0; i<size; i++) {
+      g.fill3DRect(xcoord+i*width, ycoord, width, v.get(i)*height, false);
+    }
   }
 }
 
 class ProgFrame extends JFrame {
 
-  public ProgFrame() {
+  public ProgFrame(int size) {
 
     setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
     setBounds(10,10,700,250);
     
-    Animate a = new Animate(50, "Bubble Sort", 10, 0);
+    Animate a = new Animate(10, 20, "Bubble Sort", size, 0);
 
     add(a);
     setVisible(true);
@@ -188,6 +207,6 @@ class ProgFrame extends JFrame {
 class Sort {
 
   public static void main(String[] args) {
-    ProgFrame win = new ProgFrame();
+    ProgFrame win = new ProgFrame( Integer.parseInt(args[0]) );
  }
 }
