@@ -7,49 +7,50 @@ import javax.swing.*;
 
 class Animate extends JComponent {
 
-  public void paint(Graphics g) {
-    g.drawRect (50, 50, 100, 100);
-    g.drawRect (150, 50, 100, 100);
-    g.drawRect (250, 50, 100, 100);
-    g.drawRect (350, 50, 100, 100);
-    g.drawRect (450, 50, 100, 100);
-    g.drawRect (550, 50, 100, 100);
+  private int xcoord;
+  private String name;
+  private Sort s;
+  private Algorithm a;
+
+  public Animate(int x, String n, int size, int type) {
+    xcoord = x;
+    name = n;
+    switch(type) {
+      case 0: a = new Bubble(size);
+      case 1: a = new Insertion(size);
+      case 2: a = new Shell(size);
+      case 3: a = new Merge(size);
+      case 4: a = new Quick(size);
+      case 5: a = new Heap(size);
+    }
+  }
+
+  public void paintComponent(Graphics g) {
+    g.drawRect (xcoord, 50, 100, 100);
+    g.drawString(name, xcoord, 165);
   }
 }
 
-class TextFrame extends JFrame {
+class ProgFrame extends JFrame {
 
-  public TextFrame() {
+  public ProgFrame() {
+
     setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
     setBounds(10,10,700,250);
-    getContentPane().add(new Animate());
+    
+    Animate a = new Animate(50, "Bubble Sort", 10, 0);
+
+    add(a);
     setVisible(true);
+
   }
 }
 
-
-class Sort {
-
-  private Algorithm bubble;
-  private Algorithm insertion;
-  private Algorithm shell;
-  private Algorithm merge;
-  private Algorithm quick;
-  private Algorithm heap;
-
-
-  public Sort(int size) {
-    bubble = new Bubble(size);
-  }
-
-  public void run_test() {
-    bubble.test();
-  }
 
 
 //-------------SORTING ALGORITHMS--------------//
 
- private abstract class Algorithm {
+ abstract class Algorithm {
 
     protected Vector<Integer> s;
     protected int i;
@@ -96,7 +97,7 @@ class Sort {
 
   }
 
-  private class Bubble extends Algorithm {
+  class Bubble extends Algorithm {
 
     public Bubble(int s) {
       super(s);
@@ -125,28 +126,68 @@ class Sort {
 
   }
   
-  private class Insertion {
+  class Insertion extends Algorithm {
+    
+    public Insertion(int s) {
+      super(s);
+    }
+
+    public int step() {
+      return 0;
+    }
   }
 
-  private class Shell {
+  class Shell extends Algorithm {
+
+    public Shell(int s) {
+      super(s);
+    }
+ 
+    public int step() {
+      return 0;
+    }
   }
 
-  private class Merge {
+  class Merge extends Algorithm {
+
+    public Merge(int s) {
+      super(s);
+    }
+ 
+    public int step() {
+      return 0;
+    }
   }
 
-  private class Quick {
+  class Quick extends Algorithm {
+
+    public Quick(int s) {
+      super(s);
+    }
+ 
+    public int step() {
+      return 0;
+    }
   }
 
-  private class Heap {
+  class Heap extends Algorithm {
+
+    public Heap(int s) {
+      super(s);
+    }
+ 
+    public int step() {
+      return 0;
+    }
   }
+  
 
 
-  //-------------MAIN--------------------//
+//------------MAIN-----------//
+
+class Sort {
 
   public static void main(String[] args) {
-    Sort sort = new Sort(10);
-    sort.run_test();
-
-    TextFrame win = new TextFrame();
+    ProgFrame win = new ProgFrame();
  }
 }
