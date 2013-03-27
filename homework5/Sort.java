@@ -1,6 +1,7 @@
 import java.lang.*;
 import java.util.*;
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 
@@ -12,7 +13,7 @@ class Animate extends JComponent {
   private int size;
   private String name;
   private Sort s;
-  private Algorithm a;
+  private Algorithm algo;
 
   // constructor
   public Animate(int x, int y, String n, int sze, int type) {
@@ -20,21 +21,29 @@ class Animate extends JComponent {
     ycoord = y;
     size = sze;
     name = n;
+    algo = new Bubble(sze);
     switch(type) {
-      case 0: a = new Bubble(size);
-      case 1: a = new Insertion(size);
-      case 2: a = new Shell(size);
-      case 3: a = new Merge(size);
-      case 4: a = new Quick(size);
-      case 5: a = new Heap(size);
+      case 0 : algo = new Bubble(size);    break;
+      case 1 : algo = new Insertion(size); break;
+      case 2 : algo = new Shell(size);     break;
+      case 3 : algo = new Merge(size);     break;
+      case 4 : algo = new Quick(size);     break;
+      case 5 : algo = new Heap(size);      break;
     }
   }
 
   public void paintComponent(Graphics g) {
+    super.paintComponent(g);
+
     g.setColor(Color.black);
     g.drawRect (xcoord, ycoord, 150, 150);
     g.drawString(name, xcoord, ycoord + 165);
     drawBars(g);
+    algo.step();
+  }
+
+  public void step() {
+    algo.step();
   }
 
   private void drawBars(Graphics g) {
@@ -42,8 +51,7 @@ class Animate extends JComponent {
     g.setColor(Color.blue);
     int width = 150/size;
     int height = 150/size;
-    Vector<Integer> v = a.get();
-
+    Vector<Integer> v = algo.get();
     for(int i=0; i<size; i++) {
       g.fill3DRect(xcoord+i*width, ycoord, width, v.get(i)*height, false);
     }
@@ -57,9 +65,20 @@ class ProgFrame extends JFrame {
     setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
     setBounds(10,10,700,250);
     
-    Animate a = new Animate(10, 20, "Bubble Sort", size, 0);
+    final Animate a = new Animate(10, 20, "Bubble Sort", size, 0);
 
     add(a);
+
+    int delay = 1; //milliseconds
+
+    ActionListener taskPerformer = new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        a.repaint();
+      }
+    };
+
+    new javax.swing.Timer(delay, taskPerformer).start();
+
     setVisible(true);
 
   }
@@ -69,7 +88,10 @@ class ProgFrame extends JFrame {
 
 //-------------SORTING ALGORITHMS--------------//
 
- abstract class Algorithm {
+
+
+
+abstract class Algorithm {
 
     protected Vector<Integer> s;
     protected int i;
@@ -98,7 +120,7 @@ class ProgFrame extends JFrame {
     }
     public void test() {
       print();
-      while(step() != 0);
+      while(step() != 0)
       print();
     }
 
@@ -206,7 +228,9 @@ class ProgFrame extends JFrame {
 
 class Sort {
 
+
   public static void main(String[] args) {
     ProgFrame win = new ProgFrame( Integer.parseInt(args[0]) );
- }
+    Algorithm a = new Bubble(10);
+  }
 }
