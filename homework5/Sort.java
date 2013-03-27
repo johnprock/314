@@ -69,7 +69,7 @@ class ProgFrame extends JFrame {
 
     add(a);
 
-    int delay = 1; //milliseconds
+    int delay = 100; //milliseconds
 
     ActionListener taskPerformer = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
