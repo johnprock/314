@@ -63,10 +63,10 @@ class Animate extends JComponent {
 
 class ProgFrame extends JFrame {
 
-  public ProgFrame(int size) {
+  public ProgFrame(int size, int del) {
 
     setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
-    setBounds(10,10,900,200);
+    setBounds(10,10,1000,200);
 
     JPanel p1 = new JPanel();
     p1.setLayout(new BoxLayout(p1, BoxLayout.X_AXIS));
@@ -95,13 +95,16 @@ class ProgFrame extends JFrame {
     p1.add(heap);
     p1.validate();
     add(p1);
-//    add(p2);
 
-    int delay = 20; //milliseconds
+    int delay = del; //milliseconds
     ActionListener taskPerformer = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         bubble.repaint();
         insertion.repaint();
+        shell.repaint();
+        merge.repaint();
+        quick.repaint();
+        heap.repaint();
       }
     };
 
@@ -256,6 +259,7 @@ abstract class Algorithm {
     public int step() {
       return 0;
     }
+    
   }
 
   class Merge extends Algorithm {
@@ -299,7 +303,13 @@ class Sort {
 
 
   public static void main(String[] args) {
-    ProgFrame win = new ProgFrame( Integer.parseInt(args[0]) );
-    Algorithm a = new Bubble(10);
+    if(args.length < 2) {
+      System.out.println("Correct argument usage is: ");
+      System.out.println("java Sort.java <size> <delay>");
+    }
+    else {
+      ProgFrame win = new ProgFrame( Integer.parseInt(args[0]),
+          Integer.parseInt(args[1]) );
+    }
   }
 }
