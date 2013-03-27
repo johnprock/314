@@ -64,16 +64,26 @@ class ProgFrame extends JFrame {
 
     setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
     setBounds(10,10,700,250);
-    
-    final Animate a = new Animate(10, 20, "Bubble Sort", size, 0);
+    JPanel p = new JPanel();
+    p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
 
-    add(a);
 
-    int delay = 100; //milliseconds
+    final Animate bubble = new Animate(10, 20, "Bubble Sort", size, 0);
+    final Animate insertion = new Animate(10, 20, "Insertion Sort", size, 1);
+    bubble.setSize(200,200);
+    insertion.setSize(200,200);
+    p.add(bubble,BorderLayout.PAGE_END );
+    p.validate();
+    p.add(insertion, BorderLayout.CENTER);
+    p.validate();
 
+    add(p);
+
+    int delay = 20; //milliseconds
     ActionListener taskPerformer = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        a.repaint();
+        bubble.repaint();
+        insertion.repaint();
       }
     };
 
@@ -94,14 +104,10 @@ class ProgFrame extends JFrame {
 abstract class Algorithm {
 
     protected Vector<Integer> s;
-    protected int i;
-    protected int j;
     protected boolean done;
 
     // generates a shuffled sequence for sorting
     public Algorithm(int size) {
-      i=0;
-      j=0;
       done = false;
       s = new Vector<Integer>();
       for(int i=0; i<size; i++) { 
@@ -135,13 +141,24 @@ abstract class Algorithm {
     // returns 1 otherwise
     abstract public int step(); 
     
+    protected void swap(int a, int b) {
+      Integer temp = s.get(a);
+      s.set(a,s.get(b));
+      s.set(b,temp);
+    }
+
 
   }
 
   class Bubble extends Algorithm {
 
+    int i;
+    int j;
+
     public Bubble(int s) {
       super(s);
+      i = 0;
+      j = 0;
     }
 
     public int step() {
@@ -159,24 +176,58 @@ abstract class Algorithm {
       return 1;
     }
 
-    private void swap(int a, int b) {
-      int temp = s.get(a);
-      s.set(a,s.get(b));
-      s.set(b,temp);
-    }
-
   }
   
   class Insertion extends Algorithm {
     
-    public Insertion(int s) {
-      super(s);
+    Integer val;
+    int i;
+    int hole;
+    boolean before;
+    boolean after;
+
+    public Insertion(int siz) {
+      super(siz);
+      i = 1; // i represent the hole poition
+      hole = 1;
+      before = true;
+      after = false;
     }
 
     public int step() {
-      return 0;
+   
+      if(before) { // outer loop
+        if(i == s.size()) {
+          return 0;
+        }
+        val = s.get(i);
+        hole = i;
+        before = false;
+        return 1;
+      }
+
+      if(after) { 
+        s.set(hole,val);
+        i++;
+        after = false;
+        before = true;
+        return 1;
+      }
+
+      else {
+        if(hole > 0 && val < s.get(hole - 1)) {
+          s.set(hole, s.get(hole-1));
+          hole--;
+          return 1;
+        }
+        else {
+          after = true;
+          return 1;
+        }
+      }
     }
   }
+
 
   class Shell extends Algorithm {
 
