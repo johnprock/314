@@ -36,7 +36,6 @@ class Animate extends JComponent {
     super.paintComponent(g);
 
     g.setColor(Color.black);
-    g.drawRect (xcoord, ycoord, 150, 150);
     g.drawString(name, xcoord, ycoord + 165);
     drawBars(g);
     algo.step();
@@ -48,12 +47,16 @@ class Animate extends JComponent {
 
   private void drawBars(Graphics g) {
 
-    g.setColor(Color.blue);
-    int width = 150/size;
-    int height = 150/size;
+    int width = (int) (150.0/(double)size);
+    int height = (int) (150.0/(double)size);
+    g.setColor(Color.black);
+    g.drawRect (xcoord, ycoord, width*size, height*size);
     Vector<Integer> v = algo.get();
+
+    g.setColor(Color.blue);
     for(int i=0; i<size; i++) {
-      g.fill3DRect(xcoord+i*width, ycoord, width, v.get(i)*height, false);
+      g.fill3DRect(xcoord+i*width, ycoord, width,
+          v.get(i)*height + 1, false);
     }
   }
 }
@@ -63,21 +66,36 @@ class ProgFrame extends JFrame {
   public ProgFrame(int size) {
 
     setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
-    setBounds(10,10,700,250);
-    JPanel p = new JPanel();
-    p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
+    setBounds(10,10,900,200);
+
+    JPanel p1 = new JPanel();
+    p1.setLayout(new BoxLayout(p1, BoxLayout.X_AXIS));
+    JPanel p2 = new JPanel();
+    p2.setLayout(new BoxLayout(p2, BoxLayout.X_AXIS));
+ 
 
 
     final Animate bubble = new Animate(10, 20, "Bubble Sort", size, 0);
     final Animate insertion = new Animate(10, 20, "Insertion Sort", size, 1);
-    bubble.setSize(200,200);
-    insertion.setSize(200,200);
-    p.add(bubble,BorderLayout.PAGE_END );
-    p.validate();
-    p.add(insertion, BorderLayout.CENTER);
-    p.validate();
+    final Animate shell = new Animate(10, 20, "Shell Sort", size, 2);
+    final Animate merge = new Animate(10, 20, "Merge Sort", size, 3);
+    final Animate quick = new Animate(10, 20, "Quick Sort", size, 4);
+    final Animate heap  = new Animate(10, 20, "Heap Sort",  size, 5);
 
-    add(p);
+    p1.add(bubble);
+    p1.validate();
+    p1.add(insertion);
+    p1.validate();
+    p1.add(shell);
+    p1.validate();
+    p1.add(merge);
+    p1.validate();
+    p1.add(quick);
+    p1.validate();
+    p1.add(heap);
+    p1.validate();
+    add(p1);
+//    add(p2);
 
     int delay = 20; //milliseconds
     ActionListener taskPerformer = new ActionListener() {
