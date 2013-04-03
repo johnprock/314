@@ -143,6 +143,8 @@ class Sort {
     Vector<Integer> s = generate(size);
 
     class Merge {
+    
+    
     }
 
     return data;
@@ -165,31 +167,33 @@ class Sort {
 
      void qSort(Vector<Integer> seq, int l, int r) {
        if(l < r) {
-        int p = partition(seq, l, r);
+        int p = partition(seq, l, r, l); 
         qSort(seq, l, p-1);
         qSort(seq, p+1, r);
-        data.add(new Vector<Integer>(seq));
        }
      }
 
-     int partition(Vector<Integer> seq, int l, int r) {
-      int x = seq.get(r);
-      int i = l - 1;
-
-      for(int j=1; j<=r; j++) {
-        if(seq.get(j) <= x)
-        {
-          i++;
-          seq = swap(seq, i, j);
-        }
-      }
-      seq = swap(seq, i+1, r);
-      return i+1;
-      }
+     int partition(Vector<Integer> seq, int left, int right, int pivot) { 
+      
+       int pval = seq.get(pivot);
+       swap(seq, pivot, right);
+       int store = left;
+       for(int i=left; i<right; i++) {
+         if(seq.get(i) <= pval) {
+           swap(seq, i, store);
+           data.add(new Vector<Integer>(seq));
+           store++;
+         }
+       }
+       swap(seq,store, right);
+       data.add(new Vector<Integer>(seq));
+       return store;
+     }
 
     }
+
     QSort q = new QSort();
-    q.qSort(s,1,s.size()-1);
+    q.qSort(s,0,s.size()-1);
     
     return data;
   }
@@ -197,9 +201,72 @@ class Sort {
    //---- HEAP SORT ----//
 
  static Vector<Vector<Integer>> heapSort(int size) {
-    Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
+    final Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
     Vector<Integer> s = generate(size);
-    
+   
+    class HSort {
+      Vector<Integer> seq;
+
+
+       void swap(int a, int b) {
+       Integer temp = seq.get(a);
+       seq.set(a, seq.get(b));
+       seq.set(b, temp);
+       }
+
+
+      
+      
+      HSort(Vector<Integer> _seq) {
+        seq = new Vector<Integer>(_seq);
+      }
+
+      void heapSort(int count) {
+        heapify(count);
+
+        int end = count-1;
+        while(end > 0) {
+          swap(end, 0);
+          end--;
+          siftDown(0, end);
+        }
+      }
+
+      void heapify(int count) {
+        int start = (count-2)/2;
+
+        while(start >= 0) {
+          siftDown(start, count-1);
+          start--;
+        }
+      }
+
+      void siftDown(int start, int end) {
+        int root = start;
+        int child = 0;
+        int swap = 0;
+
+        while( root*2 +1 <= end ) {
+          child = root*2 +1;
+          swap = root;
+          if(seq.get(swap) < seq.get(child)) {
+            swap = child;
+          }
+          if( child+1 <= end && seq.get(swap) < seq.get(child+1) ) {
+            swap = child + 1;
+          }
+          if( swap != root ) {
+            swap(root, swap);
+            root = swap;
+          }
+          else {
+            break;
+          }
+          data.add(new Vector<Integer>(seq));
+        }
+      }
+    }
+
     return data;
  }
 
@@ -213,7 +280,7 @@ class Sort {
 
   public static void main(String args[]) {
 
-    int size = 50;
+    int size = Integer.parseInt(args[0]);
    
     JFrame frame = new JFrame();
 //    frame.setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
@@ -233,8 +300,8 @@ class Sort {
 //        mergeSort(size));
     final Animate quick  = new Animate(10, 10, "Quick Sort", size,
         quickSort(size));   
-//    final Animate heap  = new Animate(10, 10, "Heap Sort", size,
-//        heapSort(size));  
+    final Animate heap  = new Animate(10, 10, "Heap Sort", size,
+        heapSort(size));  
         
     
     panel.add(bubble);
@@ -242,7 +309,7 @@ class Sort {
     panel.add(shell);
 //    panel.add(merge);
     panel.add(quick);
-//    panel.add(heap);
+    panel.add(heap);
 
     frame.setVisible(true);
 
@@ -254,7 +321,7 @@ class Sort {
         shell.repaint();
 //        merge.repaint();
         quick.repaint();
-//        heap.repaint();
+        heap.repaint();
       }
     };
 
