@@ -33,8 +33,11 @@ import javax.swing.*;
     }
   private void drawBars(Graphics g) {
  
-      int width = (int) (150.0/(double)size);
-      int height = (int) (150.0/(double)size);
+      int box_x = 150;
+
+      int width = (int) (box_x/(double)size);
+      int height = (int) (box_x/(double)size);
+
       g.setColor(Color.black);
       g.drawRect (xcoord, ycoord, width*size, height*size);
       Vector<Integer> v = data.get(p);
@@ -139,14 +142,72 @@ class Sort {
   //----- MERGE SORT -----//
 
   static Vector<Vector<Integer>> mergeSort(int size) {
-    Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
+    final Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
     Vector<Integer> s = generate(size);
 
     class Merge {
-    
+  
+
+      Merge(Vector<Integer> _seq) {
+        mergeSort(_seq, 0, _seq.size()-1);
+      }
+
+      Vector<Integer> mergeSort(Vector<Integer> seq, int left, int right) {
+        if(left >= right) {
+            return seq;
+        }
+      
+        int mid = (left+right)/2;
+        Vector<Integer> a = mergeSort(new Vector<Integer>(seq), left, mid);
+        Vector<Integer> b = mergeSort(new Vector<Integer>(seq), mid+1, right);
+        Vector<Integer> mer = merge(a , b, left, right, mid);
+        data.add(new Vector<Integer>(mer));
+        return mer;
+
+      }
+
+      Vector<Integer> merge(Vector<Integer> a, Vector<Integer> b, int left, int
+        right, int mid) {
+
+        Vector<Integer> c = new Vector<Integer>(a);
+        
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+        while(k <= right) {
+         
+          if(j > right) {
+            c.set(k,a.get(i));
+            i++;
+            k++;
+            data.add(new Vector<Integer>(c));
+          }
+          else
+          if(i > mid) {
+            c.set(k,b.get(j));
+            j++;
+            k++;
+            data.add(new Vector<Integer>(c));
+          }
+          else
+          if(a.get(i) <= b.get(j)) {
+            c.set(k,a.get(i));
+            i++;
+            k++;
+            data.add(new Vector<Integer>(c));
+          }
+          else {
+            c.set(k,b.get(j));
+            j++;
+            k++;
+            data.add(new Vector<Integer>(c));
+          }
+        }
+        return c;
+      }
     
     }
-
+    Merge m = new Merge(s);
     return data;
   }
 
@@ -181,9 +242,9 @@ class Sort {
        for(int i=left; i<right; i++) {
          if(seq.get(i) <= pval) {
            swap(seq, i, store);
-           data.add(new Vector<Integer>(seq));
            store++;
          }
+         data.add(new Vector<Integer>(seq));
        }
        swap(seq,store, right);
        data.add(new Vector<Integer>(seq));
@@ -227,6 +288,7 @@ class Sort {
         int end = count-1;
         while(end > 0) {
           swap(end, 0);
+          data.add(new Vector<Integer>(seq));
           end--;
           siftDown(0, end);
         }
@@ -238,6 +300,7 @@ class Sort {
         while(start >= 0) {
           siftDown(start, count-1);
           start--;
+          data.add(new Vector<Integer>(seq));
         }
       }
 
@@ -249,6 +312,7 @@ class Sort {
         while( root*2 +1 <= end ) {
           child = root*2 +1;
           swap = root;
+          data.add(new Vector<Integer>(seq));
           if(seq.get(swap) < seq.get(child)) {
             swap = child;
           }
@@ -262,11 +326,11 @@ class Sort {
           else {
             break;
           }
-          data.add(new Vector<Integer>(seq));
         }
       }
     }
-
+    HSort h = new HSort(s);
+    h.heapSort(size);
     return data;
  }
 
@@ -280,8 +344,13 @@ class Sort {
 
   public static void main(String args[]) {
 
+    if(args.length < 2) {
+      System.out.println("Correct usage: Java Sort <size> <delay>");
+    }
+
     int size = Integer.parseInt(args[0]);
-   
+    int delay = Integer.parseInt(args[1]);
+
     JFrame frame = new JFrame();
 //    frame.setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
     frame.setBounds(10,10,1000,210);
@@ -296,8 +365,8 @@ class Sort {
         insertionSort(size));
     final Animate shell  = new Animate(10, 10, "Shell Sort", size,
         shellSort(size));
-//    final Animate merge  = new Animate(10, 10, "Merge Sort", size,
-//        mergeSort(size));
+    final Animate merge  = new Animate(10, 10, "Merge Sort", size,
+        mergeSort(size));
     final Animate quick  = new Animate(10, 10, "Quick Sort", size,
         quickSort(size));   
     final Animate heap  = new Animate(10, 10, "Heap Sort", size,
@@ -307,19 +376,18 @@ class Sort {
     panel.add(bubble);
     panel.add(insert);
     panel.add(shell);
-//    panel.add(merge);
+    panel.add(merge);
     panel.add(quick);
     panel.add(heap);
 
     frame.setVisible(true);
 
-    int delay = 50;
     ActionListener taskPerformer = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         bubble.repaint();
         insert.repaint();
         shell.repaint();
-//        merge.repaint();
+        merge.repaint();
         quick.repaint();
         heap.repaint();
       }
