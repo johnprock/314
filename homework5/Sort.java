@@ -151,9 +151,46 @@ class Sort {
   //---- QUICK SORT ----//
 
   static Vector<Vector<Integer>> quickSort(int size) {
-    Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
+    final Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
     Vector<Integer> s = generate(size);
- 
+
+    class QSort {
+
+     Vector<Integer> swap(Vector<Integer> s, int a, int b) {
+       Integer temp = s.get(a);
+       s.set(a, s.get(b));
+       s.set(b, temp);
+       return s;
+     }
+
+     void qSort(Vector<Integer> seq, int l, int r) {
+       if(l < r) {
+        int p = partition(seq, l, r);
+        qSort(seq, l, p-1);
+        qSort(seq, p+1, r);
+        data.add(new Vector<Integer>(seq));
+       }
+     }
+
+     int partition(Vector<Integer> seq, int l, int r) {
+      int x = seq.get(r);
+      int i = l - 1;
+
+      for(int j=1; j<=r; j++) {
+        if(seq.get(j) <= x)
+        {
+          i++;
+          seq = swap(seq, i, j);
+        }
+      }
+      seq = swap(seq, i+1, r);
+      return i+1;
+      }
+
+    }
+    QSort q = new QSort();
+    q.qSort(s,1,s.size()-1);
+    
     return data;
   }
 
@@ -179,7 +216,7 @@ class Sort {
     int size = 50;
    
     JFrame frame = new JFrame();
-    frame.setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
+//    frame.setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
     frame.setBounds(10,10,1000,210);
 
     JPanel panel = new JPanel();
@@ -192,20 +229,20 @@ class Sort {
         insertionSort(size));
     final Animate shell  = new Animate(10, 10, "Shell Sort", size,
         shellSort(size));
-    final Animate merge  = new Animate(10, 10, "Merge Sort", size,
-        mergeSort(size));
+//    final Animate merge  = new Animate(10, 10, "Merge Sort", size,
+//        mergeSort(size));
     final Animate quick  = new Animate(10, 10, "Quick Sort", size,
         quickSort(size));   
-    final Animate heap  = new Animate(10, 10, "Heap Sort", size,
-        heapSort(size));  
+//    final Animate heap  = new Animate(10, 10, "Heap Sort", size,
+//        heapSort(size));  
         
     
     panel.add(bubble);
     panel.add(insert);
     panel.add(shell);
-    panel.add(merge);
+//    panel.add(merge);
     panel.add(quick);
-    panel.add(heap);
+//    panel.add(heap);
 
     frame.setVisible(true);
 
@@ -215,9 +252,9 @@ class Sort {
         bubble.repaint();
         insert.repaint();
         shell.repaint();
-        merge.repaint();
+//        merge.repaint();
         quick.repaint();
-        heap.repaint();
+//        heap.repaint();
       }
     };
 
