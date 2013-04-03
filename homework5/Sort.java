@@ -61,22 +61,29 @@ class Sort {
     s.set(b,temp);
   }
 
-  static Vector<Vector<Integer>> BubbleSort(int size) {
-    Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
-    
-    // generate random sequence
+
+  static Vector<Integer> generate(int size) {
+   // generate random sequence
     Vector<Integer> s = new Vector<Integer>();
     for(int i=0; i<size; i++) {
       s.add(i);
     }
     Collections.shuffle(s);
+    return s;
+  }
 
+
+  //--------- BUBBLE SORT ---------//
+  static Vector<Vector<Integer>> bubbleSort(int size) {
+    Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
+    Vector<Integer> s = generate(size);
+   
     for(int i=0; i<size-1; i++) {
       for(int j=0; j<size-1; j++) {
         if(s.get(j) > s.get(j+1)) {     
-          data.add(new Vector<Integer>(s));
           swap(s, j, j+1);
         }
+        data.add(new Vector<Integer>(s));
       }
     }
     data.add(new Vector<Integer>(s));
@@ -84,15 +91,121 @@ class Sort {
     return data;
   }
 
+  //------- INSERTION SORT --------//
+
+  static Vector<Vector<Integer>> insertionSort(int size) {
+    Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
+    Vector<Integer> s = generate(size);
+
+    for(int i=0; i<size; i++) {
+      int val = s.get(i);
+      int hole = i;
+
+      while(hole > 0 && val < s.get(hole-1)) {
+        s.set(hole,s.get(hole-1));
+        hole--;
+        data.add(new Vector<Integer>(s));
+      }
+      s.set(hole, val);
+      data.add(new Vector<Integer>(s));
+    }
+    return data;
+  }
+
+  //----- SHELL SORT ------//
+
+  static Vector<Vector<Integer>> shellSort(int size) {
+    Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
+    Vector<Integer> s = generate(size);
+    
+    int jump = size/2;
+    while(jump > 0) {
+      for(int i=jump; i<size; i++) {
+        int temp = s.get(i);
+        int j = i;
+        while(j>=jump && s.get(j-jump) > temp) {
+          s.set(j, s.get(j-jump));
+          j -= jump;
+          data.add(new Vector<Integer>(s));
+        }
+        s.set(j, temp);
+        data.add(new Vector<Integer>(s));
+      }
+      jump = jump/2;
+    }
+    return data;
+  }
+
+  //----- MERGE SORT -----//
+
+  static Vector<Vector<Integer>> mergeSort(int size) {
+    Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
+    Vector<Integer> s = generate(size);
+
+    class Merge {
+    }
+
+    return data;
+  }
+
+  //---- QUICK SORT ----//
+
+  static Vector<Vector<Integer>> quickSort(int size) {
+    Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
+    Vector<Integer> s = generate(size);
+ 
+    return data;
+  }
+
+   //---- HEAP SORT ----//
+
+ static Vector<Vector<Integer>> heapSort(int size) {
+    Vector<Vector<Integer>> data = new Vector<Vector<Integer>>();
+    Vector<Integer> s = generate(size);
+    
+    return data;
+ }
+
+
+
+
+    
+
+
+
 
   public static void main(String args[]) {
+
+    int size = 50;
    
     JFrame frame = new JFrame();
     frame.setDefaultCloseOperation(TextFrame.EXIT_ON_CLOSE);
     frame.setBounds(10,10,1000,210);
 
-    final Animate bubble = new Animate(10, 10, "Bubble Sort", 30, BubbleSort(30));
-    frame.add(bubble);
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+    frame.add(panel);
+
+    final Animate bubble = new Animate(10, 10, "Bubble Sort", size,
+        bubbleSort(size)); 
+    final Animate insert = new Animate(10, 10, "Insertion Sort", size,
+        insertionSort(size));
+    final Animate shell  = new Animate(10, 10, "Shell Sort", size,
+        shellSort(size));
+    final Animate merge  = new Animate(10, 10, "Merge Sort", size,
+        mergeSort(size));
+    final Animate quick  = new Animate(10, 10, "Quick Sort", size,
+        quickSort(size));   
+    final Animate heap  = new Animate(10, 10, "Heap Sort", size,
+        heapSort(size));  
+        
+    
+    panel.add(bubble);
+    panel.add(insert);
+    panel.add(shell);
+    panel.add(merge);
+    panel.add(quick);
+    panel.add(heap);
 
     frame.setVisible(true);
 
@@ -100,6 +213,11 @@ class Sort {
     ActionListener taskPerformer = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         bubble.repaint();
+        insert.repaint();
+        shell.repaint();
+        merge.repaint();
+        quick.repaint();
+        heap.repaint();
       }
     };
 
@@ -107,3 +225,5 @@ class Sort {
 
   }
 }
+
+
