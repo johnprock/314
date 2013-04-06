@@ -17,7 +17,7 @@ isMagic b = ca && fe && ba && be
     ba = fromIntegral (B.index b 2) == 186
     be = fromIntegral (B.index b 3) == 190
 
---wordToInt::B.ByteString -> B.ByteString -> Integer
+--wordToInt::Integer -> Integer -> Integer
 wordToInt a b = a + b*(2^8)
 	
 --getMinorVersion:: B.ByteString -> Integer
