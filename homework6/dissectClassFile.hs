@@ -29,7 +29,7 @@ getMajorVersion b = major
 	where
 		majora =fromIntegral (B.index b 6)
 		majorb = fromIntegral(B.index b 7)
-		major = majora + (majorb*2^8))
+		major = majora + (majorb*(2^8))
 
 -- process the magic constant
 procMagic :: State -> (State, String)
