@@ -16,20 +16,23 @@ isMagic b = ca && fe && ba && be
     fe = fromIntegral (B.index b 1) == 254
     ba = fromIntegral (B.index b 2) == 186
     be = fromIntegral (B.index b 3) == 190
+
+--wordToInt::B.ByteString -> B.ByteString -> Integer
+wordToInt a b = a + b*(2^8)
 	
 --getMinorVersion:: B.ByteString -> Integer
 getMinorVersion b = minor
 	where
 		minora = fromIntegral(B.index b 4)
 		minorb =  fromIntegral(B.index b 5)
-		minor = minora + (minorb*(2^8))
+		minor = wordToInt(minora,minorb)
 
 --getMajorVersion::B.ByteString -> Integer
 getMajorVersion b = major
 	where
 		majora =fromIntegral (B.index b 6)
 		majorb = fromIntegral(B.index b 7)
-		major = majora + (majorb*(2^8))
+		major = wordToInt(majora,majorb)
 
 -- process the magic constant
 procMagic :: State -> (State, String)
