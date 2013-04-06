@@ -16,6 +16,20 @@ isMagic b = ca && fe && ba && be
     fe = fromIntegral (B.index b 1) == 254
     ba = fromIntegral (B.index b 2) == 186
     be = fromIntegral (B.index b 3) == 190
+	
+--getMinorVersion:: B.ByteString -> Integer
+getMinorVersion b = minor
+	where
+		minora = fromIntegral(B.index b 4)
+		minorb =  fromIntegral(B.index b 5)
+		minor = minora + minorb
+
+--getMajorVersion::B.ByteString -> Integer
+getMajorVersion b = major
+	where
+		majora =fromIntegral (B.index b 6)
+		majorb = fromIntegral(B.index b 7)
+		major = majora + majorb
 
 -- process the magic constant
 procMagic :: State -> (State, String)
@@ -43,6 +57,6 @@ dissect state
 main :: IO()
 main = do
 
---  filename <- getLine
-  contents <- B.readFile "ClassFileReporter.class" -- fix this
+  filename <- getLine
+  contents <- B.readFile filename --"ClassFileReporter.class" -- fix this
   putStrLn $ dissect (State {pos = 0, cp = -1, cpmax = -1, cont = contents})
