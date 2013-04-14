@@ -1,0 +1,31 @@
+
+<Course>
+  <department>CSCE</department>
+  <number>314</number>
+  <title>Programming Languages</title>
+  <teacher>
+    <Person>
+      <name>Gabriel Dos Reis</name>
+      <id>112358</id>
+    </Person>
+  </teacher>
+  <students>
+    <Person>
+      <name>John Doe</name>
+      <id>123456</id>
+    </Person>
+    <Person>
+      <name>Jane Roe</name>
+      <id>234567</id>
+    </Person>
+    <Person>
+      <name>Wilma Flintstone</name>
+      <id>345678</id>
+    </Person>
+    <Person>
+      <name>George Jetson</name>
+      <id>456789</id>
+    </Person>
+  </students>
+</Course>
+
