@@ -49,11 +49,15 @@ class XmlMarshaller {
       }
       
       if(val instanceof List) {
-        return "list\n";
+        List list = (List) val;
+        String result = "";
+        for(int i=0; i<list.size(); i++) {
+          result += marshall(list.get(i));
+        }
+        return result;
       }
   
       else {
-        System.out.println("Marshalling " + val.toString() + "...");
         return marshall(val);
       }
       } catch (NullPointerException e) {System.out.println(e.getMessage());}

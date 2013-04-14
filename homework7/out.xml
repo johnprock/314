@@ -1,0 +1,56 @@
+<Course>
+<Number>
+314
+</Number>
+<Students>
+<Person>
+<Name>
+John Doe
+</Name>
+<Id>
+123456
+</Id>
+</Person>
+<Person>
+<Name>
+Jane Roe
+</Name>
+<Id>
+234567
+</Id>
+</Person>
+<Person>
+<Name>
+Wilma Flintstone
+</Name>
+<Id>
+345678
+</Id>
+</Person>
+<Person>
+<Name>
+George Jetson
+</Name>
+<Id>
+456789
+</Id>
+</Person>
+</Students>
+<Department>
+CSCE
+</Department>
+<Title>
+Programming Languages
+</Title>
+<Teacher>
+<Person>
+<Name>
+Gabriel Dos Reis
+</Name>
+<Id>
+112358
+</Id>
+</Person>
+</Teacher>
+</Course>
+
