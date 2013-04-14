@@ -3,6 +3,7 @@ import java.lang.Object;
 import java.lang.Boolean;
 import java.lang.reflect.*;
 import java.util.*;
+import java.lang.Class;
 
 class XmlMarshaller {
 
@@ -35,17 +36,34 @@ class XmlMarshaller {
 
     private static String process(Method method, Object bean) {
       
-      Type rtype = method.getGenericReturnType();
-      try {
+      try{
+      Class<?> rtype = method.getReturnType();
       Object val = method.invoke(bean);
-      return val.toString() + "\n";
-      } catch (Exception e) {System.out.println("invocation error");}
-      return "\n";
+
+      if(rtype.getCanonicalName().equals("int")) {
+          return val.toString() + "\n";
+      }
+      
+      if(val instanceof String) {
+          return val.toString() + "\n";
+      }
+      
+      if(val instanceof List) {
+        return "list\n";
+      }
+  
+      else {
+        System.out.println("Marshalling " + val.toString() + "...");
+        return marshall(val);
+      }
+      } catch (NullPointerException e) {System.out.println(e.getMessage());}
+        catch (Exception e) {System.out.println(e.getMessage());}
+      return "";
     }
 
 
     private static Boolean isGetter(String name) {
-      if(name.substring(0,3).equals("get") && name.length() < 7) {
+      if(name.substring(0,3).equals("get") && name.length() < 8) {
         return true;
       }
       if(name.substring(0,3).equals("get") &&
