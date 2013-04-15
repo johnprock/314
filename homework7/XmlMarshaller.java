@@ -192,21 +192,29 @@ class XmlMarshaller {
 		// Turns object into an instance of the class
 		o = c.forName(doc.getDocumentElement().getNodeName());
 		Method[] methods = c.getMethods();
+		Field field[] = c.getFields();
 		
 		System.out.println("Object: " + o);
 		System.out.println("Class: " + c);
+		// System.out.println(field.length);
+		// for(int i = 0; i < field.length; i++){
 		
+		// String name = field[i].getName();
+		// System.out.println(name);
+		// }
 		
 		// Print setters
 		for(int i = 0; i < methods.length; i++){
 			String name = methods[i].getName();
 			if(isSetter(methods[i].getName())){ // Iterates through all methods; for the set methods, we build the object and invoke
 				System.out.println(name);
+				System.out.println("Feeding node: " + doc.getChildNodes());
 				buildObject(methods[i], o, doc.getChildNodes(), c);
+				System.out.println("We built using method: " + i);
 			}
 		}
 		
-		
+		System.out.println("Test this: " + o);
 		
 		List<Object> lo = new ArrayList <Object>();
 	    NodeList nl = doc.getChildNodes();
@@ -230,26 +238,41 @@ class XmlMarshaller {
 	// Will call a method on an object if the value of the node and the return type of a method match
 	public static Object buildObject(Method method, Object obj, NodeList ns, Class c){
 		Class<?> rtype = method.getReturnType();
+		
+		// For any given leaf, query the method of the return type.
 		for(int i =0; i < ns.getLength(); i++){
 			Node temp = ns.item(i);
+			String name = temp.getNodeName();
 			String val = temp.getTextContent();
-			//if(temp.getNodeType() == Node.ELEMENT_NODE && val.getReturnType ==  ){
+			String methodname = method.toString();
+			int offset = name.length()+1;
+			String snippedmethod = methodname.substring(12, 18);
+			System.out.println("Method name: " + methodname);
+			System.out.println("Snipped Method: " + snippedmethod);
+			System.out.println("Length of NodeList: " + ns.getLength());
+			System.out.println("Name: " + name);
+			System.out.println("Value of node: " + val);
+			System.out.println("THE OFFSET: " + offset);
+			if(methodname.substring(12, 18 ).equalsIgnoreCase(name)) //temp.getNodeType() == Node.ELEMENT_NODE && val.getReturnType ==  ){
+			{
+				try{
+				method.invoke(obj, val);
+				System.out.println("Invoked a method count: " + i);
+				}
+				catch(Exception e){
+					System.out.println("Build Object failed");
+				}
+			}
 			
+			if(temp.hasChildNodes()){
+				buildObject(method, obj, temp.getChildNodes(), c);
+				System.out.println("Recurring.");
+			}
 			//	Object val = method.invoke(bean);
 			//}
 		}
 		
-		
-		// if(doc.hasChildNodes()){
-		// if(rtype.getCanonicalName().equals("int")) {
-          // return val.toString() + "\n";
-		// }
-      
-		// if(val instanceof String) {
-          // return val.toString() + "\n";
-		// }
-	// }
-	return obj;
+		return obj;
 	}
 	
 	
