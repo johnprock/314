@@ -187,15 +187,14 @@ class XmlMarshaller {
 		
 		// Create two classes; one to be temp.
 		Object o = new Object();
-		Class c = o.getClass();
 		// Turns class into a class of the root node
-		Class c2 = c.forName(doc.getDocumentElement().getNodeName());
+		Class c = Class.forName(doc.getDocumentElement().getNodeName());
 		// Turns object into an instance of the class
-		o = c2.forName(doc.getDocumentElement().getNodeName());
-		Method[] methods = c2.getMethods();
+		o = c.forName(doc.getDocumentElement().getNodeName());
+		Method[] methods = c.getMethods();
 		
 		System.out.println("Object: " + o);
-		System.out.println("Class: " + c2);
+		System.out.println("Class: " + c);
 		
 		
 		// Print setters
@@ -203,7 +202,7 @@ class XmlMarshaller {
 			String name = methods[i].getName();
 			if(isSetter(methods[i].getName())){ // Iterates through all methods; for the set methods, we build the object and invoke
 				System.out.println(name);
-				buildObject(methods[i], o, doc.getChildNodes(), c2);
+				buildObject(methods[i], o, doc.getChildNodes(), c);
 			}
 		}
 		
