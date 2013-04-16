@@ -1,3 +1,5 @@
+// Marshall works; unmarshall is able to get all of the setters and set all of the parts of the course class, but isn't recursively setting the methods of the Person class.
+
 import java.lang.String;
 import java.lang.Object;
 import java.lang.Boolean;
@@ -30,6 +32,7 @@ import org.w3c.dom.Entity;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+//eff the police
 
 class XmlMarshaller {
 
@@ -180,51 +183,48 @@ class XmlMarshaller {
         throw new SAXException(message);
     }
 }
-	public static Object unmarshall(String xml) throws Exception {
+
+
+	public static Object unmarshall(String iFile) throws Exception {
+		try{
+		File inXML = new File(iFile);
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		Document doc = db.parse(inXML);
+			
+		doc.getDocumentElement().normalize();
+			
+		System.out.println("Root:" + doc.getDocumentElement().getNodeName());
 		
-		xml = "test.xml";
-		Document doc = loadXML(xml);
+		if (doc.hasChildNodes()){
+			printNodes(doc.getChildNodes());
+		}
+			
 		
-		// Create two classes; one to be temp.
 		Object o = new Object();
 		// Turns class into a class of the root node
 		Class c = Class.forName(doc.getDocumentElement().getNodeName());
 		// Turns object into an instance of the class
-		o = c.forName(doc.getDocumentElement().getNodeName());
+		o = c.newInstance();
 		Method[] methods = c.getMethods();
-		Field field[] = c.getFields();
-		
-		System.out.println("Object: " + o);
-		System.out.println("Class: " + c);
-		// System.out.println(field.length);
-		// for(int i = 0; i < field.length; i++){
-		
-		// String name = field[i].getName();
-		// System.out.println(name);
-		// }
-		
 		// Print setters
 		for(int i = 0; i < methods.length; i++){
 			String name = methods[i].getName();
 			if(isSetter(methods[i].getName())){ // Iterates through all methods; for the set methods, we build the object and invoke
 				System.out.println(name);
 				System.out.println("Feeding node: " + doc.getChildNodes());
-				buildObject(methods[i], o, doc.getChildNodes(), c);
+				buildObject(methods[i], o, doc.getChildNodes(), doc.getDocumentElement());
 				System.out.println("We built using method: " + i);
 			}
 		}
 		
-		System.out.println("Test this: " + o);
-		
-		List<Object> lo = new ArrayList <Object>();
-	    NodeList nl = doc.getChildNodes();
-		System.out.println(nl.getLength());
-		for(int i = 0; i < nl.getLength(); i++){
-			System.out.println(nl.item(i));
-			//lo.add( findSetters(nl.item(i))); // this will be a nodelist of setters
-		}
 		return o;
-    }
+		} catch (Exception e){
+		System.out.println(e.getMessage());
+		//return "Whoops.";
+		return null;
+		}
+	}
 	
 	public static boolean isSetter(String name){
 		if( name.substring(0,3).equals("set") ) {
@@ -236,45 +236,97 @@ class XmlMarshaller {
 	}
 	
 	// Will call a method on an object if the value of the node and the return type of a method match
-	public static Object buildObject(Method method, Object obj, NodeList ns, Class c){
+	public static Object buildObject(Method method, Object obj, NodeList ns, Node n){
 		Class<?> rtype = method.getReturnType();
+		try{
+		Class c = Class.forName(n.getNodeName());
+		System.out.println(c);
 		
 		// For any given leaf, query the method of the return type.
 		for(int i =0; i < ns.getLength(); i++){
 			Node temp = ns.item(i);
-			String name = temp.getNodeName();
-			String val = temp.getTextContent();
+			String name = temp.getNodeName(); // number
+			String val = temp.getTextContent(); // 314
 			String methodname = method.toString();
-			int offset = name.length()+1;
-			String snippedmethod = methodname.substring(12, 18);
-			System.out.println("Method name: " + methodname);
-			System.out.println("Snipped Method: " + snippedmethod);
-			System.out.println("Length of NodeList: " + ns.getLength());
-			System.out.println("Name: " + name);
-			System.out.println("Value of node: " + val);
-			System.out.println("THE OFFSET: " + offset);
-			if(methodname.substring(12, 18 ).equalsIgnoreCase(name)) //temp.getNodeType() == Node.ELEMENT_NODE && val.getReturnType ==  ){
-			{
-				try{
-				method.invoke(obj, val);
-				System.out.println("Invoked a method count: " + i);
+			
+			System.out.println("The name of the node: " + name);
+			System.out.println("The size of the name: " + name.length());
+			System.out.println("The value of the node: " + val);
+			System.out.println("The method in use is: " + method);
+			try{
+				Field f = c.getDeclaredField(name);
+				String fn = f.toString();
+				if( fn.indexOf("int") != -1){
+					int tempint = (int)Integer.parseInt(val);
+					method.invoke(obj, tempint);
+					System.out.println("Success for ints " + f + " " + name);
 				}
-				catch(Exception e){
-					System.out.println("Build Object failed");
+			
+				else if( ( fn.indexOf("String") != -1 ) && (name.indexOf("department") != -1 && (methodname.indexOf("Department") != -1)) ){
+					method.invoke(obj, val);
+					System.out.println("Success for department Strings " + f + " " + name + methodname);
 				}
-			}
+			
+				else if( (fn.indexOf("Person") != -1) && (name.indexOf("teacher") != -1) ) {
+					method.invoke(obj, val);
+					System.out.println("Success for People! " + f + " " + name);
+				}
+				// else if( val instanceof String && (name.indexOf("students") != -1)){
+					// System.out.println("This is a list: " + val);
+					// List list = (List) val;
+					// String result = "";
+					// for(int k=0; i<list.size(); k++) {
+					// result += buildObject(list.get(i));
+					//}
+				// }
+
+				// else if(name.indexOf("#text") != -1){
+					// System.out.println("WE ARE ACTUALLY USING THE TEXT ONE");
+					// System.out.println("WE ARE ACTUALLY USING THE TEXT ONE");
+					// buildObject(method, obj, temp.getChildNodes(), temp);
+				// } 
+				
+				else{
+					System.out.println(" The name of this node is: " + temp.getNodeName() );
+				}
+				
+			} catch(Exception e){
+				//buildObject(method, obj, temp.getChildNodes(), temp);
+				System.out.println(e.toString());
+				}
 			
 			if(temp.hasChildNodes()){
-				buildObject(method, obj, temp.getChildNodes(), c);
-				System.out.println("Recurring.");
+				buildObject(method, obj, temp.getChildNodes(), n);
 			}
-			//	Object val = method.invoke(bean);
-			//}
+			
 		}
 		
+		}	catch(Exception e){ e.toString();}
 		return obj;
 	}
 	
+		public static Document loadXML(String iFile){ 
+		try{
+			File inXML = new File(iFile);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(inXML);
+		
+			doc.getDocumentElement().normalize();
+			
+			System.out.println("Root:" + doc.getDocumentElement().getNodeName());
+			
+			if (doc.hasChildNodes()){
+				printNodes(doc.getChildNodes());
+			}
+			
+			return doc;
+		} catch (Exception e){
+			System.out.println(e.getMessage());
+			//return "Whoops.";
+			return null;
+			}
+	}
 	
 		// utility function mkyong
 	private static void printNodes(NodeList ns){
@@ -305,28 +357,7 @@ class XmlMarshaller {
 		}
 	}
 	
-	public static Document loadXML(String iFile){ 
-		try{
-			File inXML = new File(iFile);
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(inXML);
-		
-			doc.getDocumentElement().normalize();
-			
-			System.out.println("Root:" + doc.getDocumentElement().getNodeName());
-			
-			if (doc.hasChildNodes()){
-				printNodes(doc.getChildNodes());
-			}
-			
-			return doc;
-		} catch (Exception e){
-			System.out.println(e.getMessage());
-			//return "Whoops.";
-			return null;
-			}
-	}
+
 
 	
 	
@@ -335,7 +366,7 @@ class XmlMarshaller {
       try {
         //Course course = makeCourse();
         //System.out.println(marshall(course));
-		unmarshall("naw");
+		unmarshall("test.xml");
       } catch(Exception e) { System.out.println("marshall error");}
     }
 }
